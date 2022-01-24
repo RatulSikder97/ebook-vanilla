@@ -11,9 +11,37 @@
     <title>Rokomari EBook Reader</title>
 </head>
 <body>
-    <section id="top-menu-bar"></section>
-    <section id="reader-view"></section>
-    <section id="bottom-menu-nar"></section>
+    <main>
+        <section id="top-menu-bar">
+            <div class="left-menu">
+                <button class="btn btn-action">
+                    <img src="/assets/icons/previous.svg" alt="menu icon">
+                </button>
+        
+                <button class="btn btn-action mx-2">
+                    <img src="/assets/icons/menu.svg" alt="menu icon">
+                </button>
+            </div>
+    
+            <div class="right-menu">
+                <button class="btn btn-action mx-2">
+                    <img src="/assets/icons/font_style.svg" alt="menu icon">
+                </button>
+        
+                <button class="btn btn-action">
+                    <img src="/assets/icons/brightness_1.svg" alt="menu icon">
+                </button>
+            </div>
+        </section>
+    
+        <section id="reader-view">
+            
+        </section>
+        <section id="bottom-menu-bar">
+            <input type="range" min="1" max="100" value="0" class="slider" id="js--book-percentage" disabled>
+            <div class="page"><span id="js--current-page"></span> of <span id="js--total-page"></span></div>
+        </section>
+    </main>
 
     
     <script src="/scripts/app.js"></script>

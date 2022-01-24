@@ -5,6 +5,7 @@ const USER_ID = param && param.get('userId') && decodeURIComponent(param.get('us
 // ELEMENTS
 const BOOK_RENDER_VIEWER = document.querySelector('#reader-view');
 const TOP_MENU_BAR = document.querySelector('#top-menu-bar');
+const BOTTOM_MENU_BAR = document.querySelector('#bottom-menu-bar');
 const BOOK_PROGRESS_RANGER = document.querySelector('#js--book-percentage');
 const CURRENT_PAGE_ELEMENT = document.querySelector('#js--current-page');
 const TOTAL_PAGE_ELEMENT = document.querySelector('#js--total-page');
@@ -48,6 +49,10 @@ function changeTheme(theme) {
     console.log(theme);
     rendition.themes.register(theme, '/styles/bookTheme.css')
     rendition.themes.select(theme)
+    BOTTOM_MENU_BAR.classList = [];
+    BOTTOM_MENU_BAR.classList.add(theme)
+    TOP_MENU_BAR.classList = [];
+    TOP_MENU_BAR.classList.add(theme)
 }
 
 /**
@@ -94,9 +99,10 @@ async function renderBook() {
 
         rendition = book.renderTo("reader-view", {
             width: '100%',
-            height: '100vh',
+            height: 'calc(100vh - 57px)',
             flow: 'scrolled',
-            manager: 'continuous'
+            manager: 'continuous',
+            snap: true
         });
 
         await loadBookInfo();

@@ -489,6 +489,27 @@ body {
   transition: all 0.5s ease-in-out;
 }
 
+#top-menu-bar.light {
+  background-color: #fff;
+}
+
+#top-menu-bar.brown {
+  background-color: #e7d6bc;
+}
+
+#top-menu-bar.green {
+  background-color: #ccf1d0;
+}
+
+#top-menu-bar.purple {
+  background-color: #f9ecfd;
+}
+
+#top-menu-bar.dark {
+  background-color: #000;
+  color: #FFF;
+}
+
 #top-menu-bar button {
   background-color: transparent;
   outline: none;
@@ -530,6 +551,27 @@ main {
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
+}
+
+#bottom-menu-bar.light {
+  background-color: #fff;
+}
+
+#bottom-menu-bar.brown {
+  background-color: #e7d6bc;
+}
+
+#bottom-menu-bar.green {
+  background-color: #ccf1d0;
+}
+
+#bottom-menu-bar.purple {
+  background-color: #f9ecfd;
+}
+
+#bottom-menu-bar.dark {
+  background-color: #000;
+  color: #FFF;
 }
 
 #bottom-menu-bar input {

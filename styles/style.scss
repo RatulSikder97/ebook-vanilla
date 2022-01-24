@@ -119,6 +119,27 @@ $padding: (
     background-color: #fff;
     transition: all 0.5s ease-in-out;
 
+    &.light {
+        background-color: #fff;
+    }
+
+    &.brown {
+        background-color: #e7d6bc;
+    }
+
+    &.green {
+        background-color: #ccf1d0;
+    }
+
+    &.purple {
+        background-color: #f9ecfd;
+    }
+
+    &.dark {
+        background-color: #000;
+        color: #FFF;
+    }
+
     button {
         background-color: transparent;
         outline: none;
@@ -147,6 +168,27 @@ main {
     background-color: #fff;
     display: flex;
     flex-direction: column;
+
+    &.light {
+        background-color: #fff;
+    }
+
+    &.brown {
+        background-color: #e7d6bc;
+    }
+
+    &.green {
+        background-color: #ccf1d0;
+    }
+
+    &.purple {
+        background-color: #f9ecfd;
+    }
+
+    &.dark {
+        background-color: #000;
+        color: #FFF;
+    }
 
     input {
         width: 90%;

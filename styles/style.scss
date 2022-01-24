@@ -163,3 +163,52 @@ main {
     transition: opacity 0.2s;
     border-radius: 25px;
 }
+
+#book-meta-content {
+    width: 280px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    background-color: #fff;
+    z-index: 99999;
+    display: none;
+
+    .content {
+        padding: 20px;
+        overflow-y: scroll;
+        height: 100%;
+
+        .item {
+            display: flex;
+            align-items: center;
+
+            p {
+                width: 200px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            img {
+                margin-left: auto;
+                width: 8px;
+            }
+        }
+    }
+}
+
+.overlay {
+    background-color: #0009;
+    height: 100vh;
+    width: 100vw;
+    z-index: 99998;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    display: none;
+}
+
+

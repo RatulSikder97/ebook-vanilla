@@ -18,7 +18,7 @@
                     <img src="/assets/icons/previous.svg" alt="menu icon">
                 </button>
         
-                <button class="btn btn-action mx-2">
+                <button class="btn btn-action mx-2" id="js--menu-btn">
                     <img src="/assets/icons/menu.svg" alt="menu icon">
                 </button>
             </div>
@@ -38,9 +38,33 @@
             
         </section>
         <section id="bottom-menu-bar">
-            <input type="range" min="1" max="100" value="0" class="slider" id="js--book-percentage" disabled>
-            <div class="page"><span id="js--current-page"></span> of <span id="js--total-page"></span></div>
+            <input type="range" min="1" max="100" value="0"  class="slider" id="js--book-percentage" disabled>
+            <div class="page"><span id="js--current-page">0</span> of <span id="js--total-page">0</span></div>
         </section>
+
+        <section id="book-meta-content" >
+
+            <div class="book-info">
+                <img src="" alt="" id="js--cover-img">
+
+                <div class="book-desc">
+                    <p class="name" id="js--book-name"></p>
+                    <p class="author" id="js--book-author"></p>
+                </div>
+            </div>
+
+           <div class="content">
+                <div id="js--toc">
+                </div>
+
+                <div id="js--Highlight">
+                </div>
+
+                <div id="js--Bookmark">
+                </div>
+           </div>
+        </section>
+        <div id="js--overlay" class="overlay"></div>
     </main>
 
     

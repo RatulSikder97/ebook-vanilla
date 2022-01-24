@@ -8,6 +8,10 @@ const TOP_MENU_BAR = document.querySelector('#top-menu-bar');
 const BOOK_PROGRESS_RANGER = document.querySelector('#js--book-percentage');
 const CURRENT_PAGE_ELEMENT = document.querySelector('#js--current-page');
 const TOTAL_PAGE_ELEMENT = document.querySelector('#js--total-page');
+const TOC_ELEMENT = document.querySelector('#js--toc');
+const OVERLAY = document.querySelector('#js--overlay');
+const BOOK_META_ELEMENT = document.querySelector('#book-meta-content');
+const MENU_BTN = document.querySelector('#js--menu-btn');
 
 // book
 let book;
@@ -15,7 +19,9 @@ let rendition;
 let metaData;
 let mouseDown;
 let isScrolling;
-let rangerChanging;
+let showTopBar;
+let navigation;
+let spine;
 
 
 renderBook();
@@ -69,16 +75,17 @@ async function renderBook() {
             manager: 'continuous'
         });
 
+        await loadBookInfo();
         rendition.display();
-        await loadMetadata();
+        renderToc()
 
-
+        let scrollingDiv;
         // add effect on reader scroll
         rendition.once("rendered", (e, i) => {
             document.querySelector('.epub-container').addEventListener('scroll', () => {
                 clearTimeout(isScrolling);
                 let onScrollTimer = setTimeout(() => {
-                    if(!rangerChanging) {
+                    if(!showTopBar) {
                         TOP_MENU_BAR.style.top = '-100%';
                     }
 
@@ -87,7 +94,7 @@ async function renderBook() {
                 // Set a timeout to run after scrolling ends
                 isScrolling = setTimeout(function () {
                     clearTimeout(onScrollTimer);
-                    rangerChanging = false;
+                    showTopBar = false;
                     TOP_MENU_BAR.style.top = '0px';
                 }, 1500);
             });
@@ -114,7 +121,7 @@ async function renderBook() {
             }, false);
 
             BOOK_PROGRESS_RANGER.addEventListener('change', (e) => {
-                rangerChanging = true;
+                showTopBar = true;
                 // cfiFromPercentage
                 rendition.display(book.locations.cfiFromPercentage(e.target.value / 100));
             }, false);
@@ -129,11 +136,12 @@ async function renderBook() {
             book.locations.generate(1024).then(data => {
                 BOOK_PROGRESS_RANGER.removeAttribute('disabled')
                 TOTAL_PAGE_ELEMENT.textContent = book.locations.total;
-                CURRENT_PAGE_ELEMENT.textContent = book.rendition.location.end.location;
+                console.log( book.rendition.currentLocation().end.percentage * 100);
+                BOOK_PROGRESS_RANGER.value =  book.rendition.currentLocation().end.percentage * 100;
+                CURRENT_PAGE_ELEMENT.textContent = book.rendition.currentLocation().end.location;
             })
         });
-
-
+        
         rendition.on("relocated", (location) => {
 
             let percent = book.locations.percentageFromCfi(location.start.cfi);
@@ -148,7 +156,42 @@ async function renderBook() {
 }
 
 
-async function loadMetadata() {
+async function loadBookInfo() {
     metaData = await book.loaded.metadata;
-
+    navigation = await book.loaded.navigation;
+    spine = await book.loaded.spine;
 }
+
+function renderToc() {
+    let tocHtml = '';
+    navigation.toc.forEach((data,index) => {
+        tocHtml += `<div class="item" onclick="goToChapter('${data.href}')">
+                        <p class="label"> ${data.label}</p>
+                        <img src="/assets/icons/circle-fill.svg" alt="">
+                    </div>`
+    });
+
+    TOC_ELEMENT.innerHTML = tocHtml;   
+}
+
+function goToChapter(chapter) {
+    rendition.display(chapter).then(() => {
+        document.querySelector('.epub-view').scrollTo(0,0);
+        BOOK_META_ELEMENT.style.display = 'none';
+        OVERLAY.style.display = 'none';
+
+        rendition.display(chapter);
+    });
+    showTopBar = true;    
+}
+
+OVERLAY.addEventListener('click', () =>  {
+    BOOK_META_ELEMENT.style.display = 'none';
+    OVERLAY.style.display = 'none';
+});
+
+
+MENU_BTN.addEventListener('click', () => {
+    BOOK_META_ELEMENT.style.display = 'block';
+    OVERLAY.style.display = 'block';
+});

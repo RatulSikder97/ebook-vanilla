@@ -598,4 +598,47 @@ main {
   right: 0;
   display: none;
 }
+
+#book-theme {
+  padding: 20px;
+  display: none;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  right: 0;
+  border-radius: 0 0 5px 5px;
+  -webkit-box-shadow: 0 0 5px #ccc;
+          box-shadow: 0 0 5px #ccc;
+  background-color: #fff;
+}
+
+#book-theme .item {
+  height: 45px;
+  width: 45px;
+  border-radius: 50%;
+}
+
+#book-theme .item.light {
+  background-color: #fff;
+  border: 1px solid #000;
+}
+
+#book-theme .item.brown {
+  background-color: #e7d6bc;
+}
+
+#book-theme .item.green {
+  background-color: #ccf1d0;
+}
+
+#book-theme .item.purple {
+  background-color: #f9ecfd;
+}
+
+#book-theme .item.dark {
+  background-color: #000;
+}
 /*# sourceMappingURL=style.css.map */

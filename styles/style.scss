@@ -211,4 +211,42 @@ main {
     display: none;
 }
 
+#book-theme {
+    padding: 20px;
+    display: none;
+    justify-content: space-between;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    right: 0;
+    border-radius: 0 0 5px 5px;
+    box-shadow: 0 0 5px #ccc;
+    background-color: #fff;
 
+    .item {
+        height: 45px;
+        width: 45px;
+        border-radius: 50%;
+
+        &.light {
+            background-color: #fff;
+            border: 1px solid #000;
+        }
+
+        &.brown {
+            background-color: #e7d6bc;
+        }
+
+        &.green {
+            background-color: #ccf1d0;
+        }
+
+        &.purple {
+            background-color: #f9ecfd;
+        }
+
+        &.dark {
+            background-color: #000;
+        }
+    }
+}

@@ -1,0 +1,55 @@
+.light {
+    background-color: #fff;
+}
+
+.brown {
+    background-color: #e7d6bc;
+}
+
+.green {
+    background-color: #ccf1d0;
+}
+
+.purple {
+    background-color: #f9ecfd;
+}
+
+.dark {
+    background-color: #000;
+    color: #fff;
+}
+
+/* light theme */
+.light {
+	color: inherit;
+}
+
+.light a {
+	color: #ff4081;
+}
+
+.light ::selection {
+	background-color: #2ecdf5;
+}
+
+/* dark theme */
+.dark, .dark p {
+	color: #fafafa !important;
+}
+
+.dark a {
+	color: #66d9ef !important;
+}
+
+.dark h1,
+.dark h2,
+.dark h3,
+.dark h4,
+.dark h5,
+.dark h6 {
+	color: white !important;
+}
+
+.dark ::selection {
+	background-color: #bcbcbc;
+}

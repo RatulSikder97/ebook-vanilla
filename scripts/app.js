@@ -12,6 +12,12 @@ const TOC_ELEMENT = document.querySelector('#js--toc');
 const OVERLAY = document.querySelector('#js--overlay');
 const BOOK_META_ELEMENT = document.querySelector('#book-meta-content');
 const MENU_BTN = document.querySelector('#js--menu-btn');
+const THEME_CHANGE_BTN = document.querySelector('#js--theme-change-btn');
+const BOOK_THEME_CARD = document.querySelector('#book-theme');
+
+const BOOK_THEME = ['light', 'brown', 'green', 'purple', 'dark'];
+
+
 
 // book
 let book;
@@ -23,8 +29,23 @@ let showTopBar;
 let navigation;
 let spine;
 
-
+renderBookThemeChangeCard();
 renderBook();
+
+function renderBookThemeChangeCard() {
+    let bookThemeHtml = '';
+    BOOK_THEME.forEach(data => {
+        bookThemeHtml += `<div class="item ${data}" onclick="changeTheme('${data}')"></div>`
+    });
+
+    BOOK_THEME_CARD.innerHTML = bookThemeHtml;
+}
+
+function changeTheme(theme) {
+    console.log(theme);
+    rendition.themes.register(theme, '/styles/bookTheme.css')
+    rendition.themes.select(theme)
+}
 
 /**
  * User Verification
@@ -85,7 +106,7 @@ async function renderBook() {
             document.querySelector('.epub-container').addEventListener('scroll', () => {
                 clearTimeout(isScrolling);
                 let onScrollTimer = setTimeout(() => {
-                    if(!showTopBar) {
+                    if (!showTopBar) {
                         TOP_MENU_BAR.style.top = '-100%';
                     }
 
@@ -96,7 +117,7 @@ async function renderBook() {
                     clearTimeout(onScrollTimer);
                     showTopBar = false;
                     TOP_MENU_BAR.style.top = '0px';
-                }, 1500);
+                }, 1000);
             });
 
             BOOK_PROGRESS_RANGER.addEventListener("mousedown", function () {
@@ -131,17 +152,21 @@ async function renderBook() {
             BOOK_PROGRESS_RANGER.value = currentPage;
         });
 
+        rendition.on('click', () => {
+            hideAuxElement();
+        });
+
 
         book.ready.then(() => {
             book.locations.generate(1024).then(data => {
                 BOOK_PROGRESS_RANGER.removeAttribute('disabled')
                 TOTAL_PAGE_ELEMENT.textContent = book.locations.total;
-                console.log( book.rendition.currentLocation().end.percentage * 100);
-                BOOK_PROGRESS_RANGER.value =  book.rendition.currentLocation().end.percentage * 100;
+                console.log(book.rendition.currentLocation().end.percentage * 100);
+                BOOK_PROGRESS_RANGER.value = book.rendition.currentLocation().end.percentage * 100;
                 CURRENT_PAGE_ELEMENT.textContent = book.rendition.currentLocation().end.location;
             })
         });
-        
+
         rendition.on("relocated", (location) => {
 
             let percent = book.locations.percentageFromCfi(location.start.cfi);
@@ -164,28 +189,33 @@ async function loadBookInfo() {
 
 function renderToc() {
     let tocHtml = '';
-    navigation.toc.forEach((data,index) => {
+    navigation.toc.forEach((data, index) => {
         tocHtml += `<div class="item" onclick="goToChapter('${data.href}')">
                         <p class="label"> ${data.label}</p>
                         <img src="/assets/icons/circle-fill.svg" alt="">
                     </div>`
     });
 
-    TOC_ELEMENT.innerHTML = tocHtml;   
+    TOC_ELEMENT.innerHTML = tocHtml;
 }
 
 function goToChapter(chapter) {
     rendition.display(chapter).then(() => {
-        document.querySelector('.epub-view').scrollTo(0,0);
+        document.querySelector('.epub-view').scrollTo(0, 0);
         BOOK_META_ELEMENT.style.display = 'none';
         OVERLAY.style.display = 'none';
 
         rendition.display(chapter);
     });
-    showTopBar = true;    
+    showTopBar = true;
 }
 
-OVERLAY.addEventListener('click', () =>  {
+function hideAuxElement() {
+    BOOK_THEME_CARD.style.display = 'none';
+    BOOK_META_ELEMENT.style.display = 'none';
+}
+
+OVERLAY.addEventListener('click', () => {
     BOOK_META_ELEMENT.style.display = 'none';
     OVERLAY.style.display = 'none';
 });
@@ -194,4 +224,11 @@ OVERLAY.addEventListener('click', () =>  {
 MENU_BTN.addEventListener('click', () => {
     BOOK_META_ELEMENT.style.display = 'block';
     OVERLAY.style.display = 'block';
+
+    // hide others
+    BOOK_THEME_CARD.style.display = 'none';
+}, false);
+
+THEME_CHANGE_BTN.addEventListener('click', () => {
+    BOOK_THEME_CARD.style.display = 'flex';
 });

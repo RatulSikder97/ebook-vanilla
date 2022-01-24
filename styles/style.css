@@ -641,4 +641,136 @@ main {
 #book-theme .item.dark {
   background-color: #000;
 }
+
+.font-sizer {
+  padding: 20px;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  right: 0;
+  border-radius: 0 0 5px 5px;
+  -webkit-box-shadow: 0 0 5px #ccc;
+          box-shadow: 0 0 5px #ccc;
+  background-color: #fff;
+  display: none;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.ranger-custom {
+  margin-bottom: -20px;
+}
+
+.ranger-custom input[type=range] {
+  -webkit-appearance: none;
+  display: block;
+  margin: 0;
+  width: 100%;
+  background: transparent;
+}
+
+.ranger-custom input[type=range]::-webkit-slider-runnable-track {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 1px;
+  color: transparent;
+  background: lightgray;
+  border-radius: 999px;
+  z-index: 2;
+  border: none;
+}
+
+.ranger-custom input[type=range]::-moz-range-track {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 1px;
+  color: transparent;
+  background: lightgray;
+  border-radius: 999px;
+  z-index: 2;
+  border: none;
+}
+
+.ranger-custom input[type=range]::-ms-track {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 1px;
+  color: transparent;
+  background: lightgray;
+  border-radius: 999px;
+  z-index: 2;
+  border: none;
+}
+
+.ranger-custom input[type=range]::-ms-fill-lower {
+  display: none;
+}
+
+.ranger-custom input[type=range]::-ms-fill-upper {
+  display: none;
+}
+
+.ranger-custom input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 20px;
+  width: 20px;
+  border-radius: 30px;
+  background: #0957ff;
+  border: 5px solid #fff;
+  -webkit-filter: drop-shadow(0 0 5px #ccc);
+          filter: drop-shadow(0 0 5px #ccc);
+  margin-top: -10px;
+  z-index: 3;
+}
+
+.ranger-custom input[type=range]::-moz-range-thumb {
+  -webkit-appearance: none;
+  height: 20px;
+  width: 20px;
+  border-radius: 30px;
+  background: #0957ff;
+  border: 5px solid #fff;
+  filter: drop-shadow(0 0 5px #ccc);
+  margin-top: -10px;
+  z-index: 3;
+}
+
+.ranger-custom input[type=range]::-ms-thumb {
+  -webkit-appearance: none;
+  height: 20px;
+  width: 20px;
+  border-radius: 30px;
+  background: #0957ff;
+  border: 5px solid #fff;
+  filter: drop-shadow(0 0 5px #ccc);
+  margin-top: -10px;
+  z-index: 3;
+}
+
+.ranger-custom .ticks {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  padding: 5px 10px;
+  margin-top: -12px;
+  z-index: 1;
+}
+
+.ranger-custom .tick {
+  position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  width: 2px;
+  background: lightgray;
+  height: 12px;
+  margin-bottom: 10px;
+}
 /*# sourceMappingURL=style.css.map */

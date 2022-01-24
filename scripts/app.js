@@ -13,7 +13,10 @@ const OVERLAY = document.querySelector('#js--overlay');
 const BOOK_META_ELEMENT = document.querySelector('#book-meta-content');
 const MENU_BTN = document.querySelector('#js--menu-btn');
 const THEME_CHANGE_BTN = document.querySelector('#js--theme-change-btn');
+const FONT_SIZE_CHANGE_BTN = document.querySelector('#js--font-size-btn');
 const BOOK_THEME_CARD = document.querySelector('#book-theme');
+const FONT_RESIZE_CARD = document.querySelector('#js--font-sizer');
+const FONT_RESIZE_RANGE = document.querySelector('#js--font-resize-ranger');
 
 const BOOK_THEME = ['light', 'brown', 'green', 'purple', 'dark'];
 
@@ -100,16 +103,16 @@ async function renderBook() {
         rendition.display();
         renderToc()
 
-        let scrollingDiv;
         // add effect on reader scroll
         rendition.once("rendered", (e, i) => {
             document.querySelector('.epub-container').addEventListener('scroll', () => {
+                hideAuxElement();
+
                 clearTimeout(isScrolling);
                 let onScrollTimer = setTimeout(() => {
                     if (!showTopBar) {
                         TOP_MENU_BAR.style.top = '-100%';
                     }
-
                 }, 100);
 
                 // Set a timeout to run after scrolling ends
@@ -213,6 +216,7 @@ function goToChapter(chapter) {
 function hideAuxElement() {
     BOOK_THEME_CARD.style.display = 'none';
     BOOK_META_ELEMENT.style.display = 'none';
+    FONT_RESIZE_CARD.style.display = 'none';
 }
 
 OVERLAY.addEventListener('click', () => {
@@ -222,13 +226,22 @@ OVERLAY.addEventListener('click', () => {
 
 
 MENU_BTN.addEventListener('click', () => {
+    hideAuxElement();
     BOOK_META_ELEMENT.style.display = 'block';
     OVERLAY.style.display = 'block';
-
-    // hide others
-    BOOK_THEME_CARD.style.display = 'none';
 }, false);
 
 THEME_CHANGE_BTN.addEventListener('click', () => {
+    hideAuxElement();
     BOOK_THEME_CARD.style.display = 'flex';
+});
+
+FONT_SIZE_CHANGE_BTN.addEventListener('click', () => {
+    hideAuxElement()
+    FONT_RESIZE_CARD.style.display = 'flex';
+});
+
+FONT_RESIZE_RANGE.addEventListener('change', (e) => {
+    rendition.themes.fontSize(e.target.value+'px');
+    showTopBar = true;
 });

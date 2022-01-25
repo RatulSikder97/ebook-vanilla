@@ -21,8 +21,11 @@ const FONT_RESIZE_RANGE = document.querySelector('#js--font-resize-ranger');
 const BOOK_NAME_ELEMENT = document.querySelector('#js--book-name');
 const BOOK_AUTHOR_ELEMENT = document.querySelector('#js--book-author');
 const BOOK_COVER_ELEMENT = document.querySelector('#js--cover-img');
+const BOOK_HIGHLIGHT_CONTENT = document.querySelector('#js--highlight-colors');
+const BOOK_HIGHLIGHTER = document.querySelector('#js--highlighter');
 
 const BOOK_THEME = ['light', 'brown', 'green', 'purple', 'dark'];
+const BOOK_HIGHLIGHT_COLORS = ['blue', 'orange', 'red'];
 
 
 
@@ -40,6 +43,11 @@ let bookCoverImage;
 let bookName;
 let bookAuthor;
 
+let selectedCfi;
+let selectedContent;
+let epubSelection;
+
+renderBookHighlighterColor();
 renderBookThemeChangeCard();
 renderBook();
 
@@ -52,6 +60,15 @@ function renderBookThemeChangeCard() {
     BOOK_THEME_CARD.innerHTML = bookThemeHtml;
 }
 
+function renderBookHighlighterColor() {
+    let bookHighlightColorHtml = '';
+    BOOK_HIGHLIGHT_COLORS.forEach(data => {
+        bookHighlightColorHtml += `<div class="${data}" onclick="highlightSelection('${data}')"></div>`
+    });
+
+    BOOK_HIGHLIGHT_CONTENT.innerHTML = bookHighlightColorHtml;
+}
+
 function changeTheme(theme) {
     console.log(theme);
     rendition.themes.register(theme, '/styles/bookTheme.css')
@@ -61,6 +78,21 @@ function changeTheme(theme) {
     TOP_MENU_BAR.classList = [];
     TOP_MENU_BAR.classList.add(theme)
 }
+
+function highlightSelection(color) {
+    rendition.annotations.highlight(
+        selectedCfi,
+        {},
+        (e) => {
+          console.log(e);
+        },
+        'h-' + color
+      );
+
+      BOOK_HIGHLIGHTER.style.visibility = 'hidden';
+      epubSelection.removeAllRanges();
+}
+
 
 /**
  * User Verification
@@ -195,8 +227,35 @@ async function renderBook() {
                 BOOK_PROGRESS_RANGER.value = percentage;
             }
             CURRENT_PAGE_ELEMENT.textContent = location.end.location;
-
         });
+
+        rendition.on('selected', (cfi, content) => {
+            epubSelection = content.window.getSelection();
+            const frame = content.document.defaultView.frameElement;
+  
+            let range = epubSelection.getRangeAt(0),
+              clientRects = range.getBoundingClientRect();
+  
+            const { left, right, top, bottom } = getRect(range, frame);
+            console.log(left, right, top, bottom);
+  
+            selectedCfi = cfi;
+            selectedContent = epubSelection.toString();
+            BOOK_HIGHLIGHTER.style.top = bottom + 'px';
+            if (left + 180 >= window.innerWidth) {
+              BOOK_HIGHLIGHTER.style.left = left - 100 + 'px';
+            } else if (left - 30 < 0) {
+              BOOK_HIGHLIGHTER.style.left = 30 + 'px';
+            } else {
+              BOOK_HIGHLIGHTER.style.left = left + 'px';
+            }
+  
+            if (epubSelection.toString().length > 0) {
+              BOOK_HIGHLIGHTER.style.visibility = 'visible';
+            } else {
+              BOOK_HIGHLIGHTER.style.visibility = 'hidden';
+            }
+          });
     }
 }
 
@@ -276,3 +335,16 @@ FONT_RESIZE_RANGE.addEventListener('change', (e) => {
     rendition.themes.fontSize(e.target.value+'px');
     showTopBar = true;
 });
+
+
+const getRect = (target, frame) => {
+    const rect = target.getBoundingClientRect();
+    const viewElementRect = frame
+      ? frame.getBoundingClientRect()
+      : { left: 0, top: 0 };
+    const left = rect.left + viewElementRect.left;
+    const right = rect.right + viewElementRect.left;
+    const top = rect.top + viewElementRect.top;
+    const bottom = rect.bottom + viewElementRect.top;
+    return { left, right, top, bottom };
+  };

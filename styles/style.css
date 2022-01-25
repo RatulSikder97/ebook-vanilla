@@ -7,6 +7,24 @@ body {
   scroll-behavior: smooth !important;
 }
 
+.h-red {
+  fill: #fa64007a;
+  fill-opacity: 0.3;
+  mix-blend-mode: multiply;
+}
+
+.h-orange {
+  fill: #ffc653a1;
+  fill-opacity: 0.3;
+  mix-blend-mode: multiply;
+}
+
+.h-blue {
+  fill: #0091ff79;
+  fill-opacity: 0.3;
+  mix-blend-mode: multiply;
+}
+
 .w-100 {
   width: 100%;
 }
@@ -547,7 +565,7 @@ p {
 
 #top-menu-bar.dark {
   background-color: #000;
-  color: #FFF;
+  color: #fff;
 }
 
 #top-menu-bar button {
@@ -611,7 +629,7 @@ main {
 
 #bottom-menu-bar.dark {
   background-color: #000;
-  color: #FFF;
+  color: #fff;
 }
 
 #bottom-menu-bar input {
@@ -745,7 +763,7 @@ main {
   margin-bottom: -20px;
 }
 
-.ranger-custom input[type=range] {
+.ranger-custom input[type="range"] {
   -webkit-appearance: none;
   display: block;
   margin: 0;
@@ -753,7 +771,7 @@ main {
   background: transparent;
 }
 
-.ranger-custom input[type=range]::-webkit-slider-runnable-track {
+.ranger-custom input[type="range"]::-webkit-slider-runnable-track {
   -webkit-appearance: none;
   width: 100%;
   height: 1px;
@@ -764,7 +782,7 @@ main {
   border: none;
 }
 
-.ranger-custom input[type=range]::-moz-range-track {
+.ranger-custom input[type="range"]::-moz-range-track {
   -webkit-appearance: none;
   width: 100%;
   height: 1px;
@@ -775,7 +793,7 @@ main {
   border: none;
 }
 
-.ranger-custom input[type=range]::-ms-track {
+.ranger-custom input[type="range"]::-ms-track {
   -webkit-appearance: none;
   width: 100%;
   height: 1px;
@@ -786,15 +804,15 @@ main {
   border: none;
 }
 
-.ranger-custom input[type=range]::-ms-fill-lower {
+.ranger-custom input[type="range"]::-ms-fill-lower {
   display: none;
 }
 
-.ranger-custom input[type=range]::-ms-fill-upper {
+.ranger-custom input[type="range"]::-ms-fill-upper {
   display: none;
 }
 
-.ranger-custom input[type=range]::-webkit-slider-thumb {
+.ranger-custom input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   height: 20px;
   width: 20px;
@@ -807,7 +825,7 @@ main {
   z-index: 3;
 }
 
-.ranger-custom input[type=range]::-moz-range-thumb {
+.ranger-custom input[type="range"]::-moz-range-thumb {
   -webkit-appearance: none;
   height: 20px;
   width: 20px;
@@ -819,7 +837,7 @@ main {
   z-index: 3;
 }
 
-.ranger-custom input[type=range]::-ms-thumb {
+.ranger-custom input[type="range"]::-ms-thumb {
   -webkit-appearance: none;
   height: 20px;
   width: 20px;
@@ -889,5 +907,48 @@ main {
   color: #9c9c9c;
   font-size: 14px;
   margin-right: 20px;
+}
+
+.highlight {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 999999;
+  padding: 20px;
+  background-color: #fff;
+  -webkit-filter: drop-shadow(0 0 5px #ccc);
+          filter: drop-shadow(0 0 5px #ccc);
+  border-radius: 5px;
+  visibility: hidden;
+}
+
+.highlight .colors {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  border-right: 1px solid #e5e8ef;
+}
+
+.highlight .colors div {
+  width: 25px;
+  height: 25px;
+  margin-right: 10px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.highlight .colors .red {
+  background-color: #fa6400;
+}
+
+.highlight .colors .orange {
+  background-color: #ffc553;
+}
+
+.highlight .colors .blue {
+  background-color: #0091ff;
 }
 /*# sourceMappingURL=style.css.map */

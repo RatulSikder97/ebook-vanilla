@@ -51,6 +51,10 @@ renderBookHighlighterColor();
 renderBookThemeChangeCard();
 renderBook();
 
+
+/**
+ * 
+ */
 function renderBookThemeChangeCard() {
     let bookThemeHtml = '';
     BOOK_THEME.forEach(data => {
@@ -60,6 +64,10 @@ function renderBookThemeChangeCard() {
     BOOK_THEME_CARD.innerHTML = bookThemeHtml;
 }
 
+
+/**
+ * 
+ */
 function renderBookHighlighterColor() {
     let bookHighlightColorHtml = '';
     BOOK_HIGHLIGHT_COLORS.forEach(data => {
@@ -69,8 +77,11 @@ function renderBookHighlighterColor() {
     BOOK_HIGHLIGHT_CONTENT.innerHTML = bookHighlightColorHtml;
 }
 
+/**
+ * 
+ * @param {*} theme 
+ */
 function changeTheme(theme) {
-    console.log(theme);
     rendition.themes.register(theme, '/styles/bookTheme.css')
     rendition.themes.select(theme)
     BOTTOM_MENU_BAR.classList = [];
@@ -79,6 +90,11 @@ function changeTheme(theme) {
     TOP_MENU_BAR.classList.add(theme)
 }
 
+
+/**
+ * 
+ * @param {*} color 
+ */
 function highlightSelection(color) {
     rendition.annotations.highlight(
         selectedCfi,
@@ -145,7 +161,6 @@ async function renderBook() {
         });
 
         loadBookInfo().then(() => {
-            console.log(bookCoverImage);
             renderBookMetaInfo(bookCoverImage, metaData.title, metaData.creator)
             renderToc()
         });
@@ -213,7 +228,6 @@ async function renderBook() {
             book.locations.generate(1024).then(data => {
                 BOOK_PROGRESS_RANGER.removeAttribute('disabled')
                 TOTAL_PAGE_ELEMENT.textContent = book.locations.total;
-                console.log(book.rendition.currentLocation().end.percentage * 100);
                 BOOK_PROGRESS_RANGER.value = book.rendition.currentLocation().end.percentage * 100;
                 CURRENT_PAGE_ELEMENT.textContent = book.rendition.currentLocation().end.location;
             })
@@ -237,7 +251,6 @@ async function renderBook() {
               clientRects = range.getBoundingClientRect();
   
             const { left, right, top, bottom } = getRect(range, frame);
-            console.log(left, right, top, bottom);
   
             selectedCfi = cfi;
             selectedContent = epubSelection.toString();
@@ -331,12 +344,18 @@ FONT_SIZE_CHANGE_BTN.addEventListener('click', () => {
     FONT_RESIZE_CARD.style.display = 'flex';
 });
 
+
 FONT_RESIZE_RANGE.addEventListener('change', (e) => {
     rendition.themes.fontSize(e.target.value+'px');
     showTopBar = true;
 });
 
-
+/**
+ * 
+ * @param {*} target 
+ * @param {*} frame 
+ * @returns 
+ */
 const getRect = (target, frame) => {
     const rect = target.getBoundingClientRect();
     const viewElementRect = frame

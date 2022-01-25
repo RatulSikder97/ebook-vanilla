@@ -18,6 +18,9 @@ const FONT_SIZE_CHANGE_BTN = document.querySelector('#js--font-size-btn');
 const BOOK_THEME_CARD = document.querySelector('#book-theme');
 const FONT_RESIZE_CARD = document.querySelector('#js--font-sizer');
 const FONT_RESIZE_RANGE = document.querySelector('#js--font-resize-ranger');
+const BOOK_NAME_ELEMENT = document.querySelector('#js--book-name');
+const BOOK_AUTHOR_ELEMENT = document.querySelector('#js--book-author');
+const BOOK_COVER_ELEMENT = document.querySelector('#js--cover-img');
 
 const BOOK_THEME = ['light', 'brown', 'green', 'purple', 'dark'];
 
@@ -32,6 +35,10 @@ let isScrolling;
 let showTopBar;
 let navigation;
 let spine;
+
+let bookCoverImage;
+let bookName;
+let bookAuthor;
 
 renderBookThemeChangeCard();
 renderBook();
@@ -105,9 +112,13 @@ async function renderBook() {
             snap: true
         });
 
-        await loadBookInfo();
+        loadBookInfo().then(() => {
+            console.log(bookCoverImage);
+            renderBookMetaInfo(bookCoverImage, metaData.title, metaData.creator)
+            renderToc()
+        });
         rendition.display();
-        renderToc()
+       
 
         // add effect on reader scroll
         rendition.once("rendered", (e, i) => {
@@ -194,6 +205,10 @@ async function loadBookInfo() {
     metaData = await book.loaded.metadata;
     navigation = await book.loaded.navigation;
     spine = await book.loaded.spine;
+
+    // load cover image
+    let cover = await book.loaded.cover;
+    bookCoverImage = await  book.archive.createUrl(cover, { base64: true })
 }
 
 function renderToc() {
@@ -206,6 +221,16 @@ function renderToc() {
     });
 
     TOC_ELEMENT.innerHTML = tocHtml;
+}
+/**
+ * 
+ * @param {*} name 
+ * @param {*} author 
+ */
+function renderBookMetaInfo(coverImage, name, author) {
+    BOOK_COVER_ELEMENT.src = coverImage;
+    BOOK_NAME_ELEMENT.textContent = name;
+    BOOK_AUTHOR_ELEMENT.textContent = author;
 }
 
 function goToChapter(chapter) {

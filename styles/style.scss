@@ -15,6 +15,45 @@ body {
     height: 100%;
 }
 
+p {
+    margin: 0;
+}
+
+// typography 
+$fontWeight:(
+    100,
+    200,
+    300,
+    400,
+    500,
+    600,
+    700,
+    800,
+    900,
+);
+
+@each $weight in $fontWeight {
+    .fw-#{$weight} {
+        font-weight: $weight;
+    }
+}
+
+$colorsLight :(
+    primary: #f99e21,
+    accentColor: #056dff,
+    borderColor: #e5e8ef,
+    backgroundColor: #fff,
+    titleColor: #1b1b1b,
+    subtitleColor: #9c9c9c,
+    operationHeaderColor: #fbfbfb,
+    shadowColor: #ccc,
+    bodyColor: #e5e5e5,
+    overlayColor: #0000008f,
+    bookInfoBgColor: #fafafa,
+);
+
+$whiteColor: #fff;
+
 $margin: (
     0: 0,
     1: 5px,
@@ -230,6 +269,7 @@ main {
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
+                margin-bottom: 10px;
             }
 
             img {
@@ -314,8 +354,6 @@ main {
 $unit: 5px;
 
 
-//Some range styling.
-//Using mixins because each major browser needs a separate selector to style parts of the range input, combining selectors would invalidate the whole selector on each browser
 @mixin range-track {
   -webkit-appearance: none;
   width: 100%;
@@ -408,4 +446,34 @@ $unit: 5px;
     margin-bottom: $unit*2;
   }
 
+}
+
+
+.book-info {
+    padding: 15px;
+    background-color: lighten(map-get($colorsLight, bodyColor ), 5);
+    border-bottom: 1px solid map-get($colorsLight, borderColor );
+    display: flex;
+    align-items: center;
+
+    img {
+        width: 50px;
+        object-fit: contain;
+    }
+
+    .book-desc{
+        margin-left: 15px;
+
+        .title {
+            font-size: 16px;
+            margin-bottom: 5px;
+            color: map-get($colorsLight, titleColor);
+          }
+      
+          .subtitle {
+            color: map-get($colorsLight, subtitleColor);
+            font-size: 14px;
+            margin-right: 20px;
+          }
+    }
 }

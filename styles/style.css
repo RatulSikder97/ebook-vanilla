@@ -523,7 +523,8 @@ p {
   padding-bottom: 30px;
 }
 
-#reader-view {
+#reader-view,
+#reader-view-hidden {
   width: 100vw;
   height: 100%;
   padding-bottom: 20px;

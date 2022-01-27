@@ -274,14 +274,45 @@ async function renderBook() {
 
 
 async function loadBookInfo() {
-    metaData = await book.loaded.metadata;
-    navigation = await book.loaded.navigation;
-    spine = await book.loaded.spine;
+	metaData = await book.loaded.metadata;
+	navigation = await book.loaded.navigation;
+	spine = await book.loaded.spine;
 
-    // load cover image
-    let cover = await book.loaded.cover;
-    bookCoverImage = await  book.archive.createUrl(cover, { base64: true })
+	// load cover image
+	let cover = await book.loaded.cover;
+	bookCoverImage = await book.archive.createUrl(cover, { base64: true });
 }
+let hiddenRender;
+getTotalPage();
+function getTotalPage() {
+	//
+	const hiddenBook = ePub(BOOK_URL);
+	hiddenRender = hiddenBook.renderTo("reader-view-hidden", {
+		width: "100%",
+		height: "calc(100vh - 57px)",
+		flow: "scrolled",
+		manager: "continuous",
+		snap: true,
+	});
+
+	let hugePromise = [];
+	for (let index = 1; index < 145; index++) {
+		hugePromise.push(index);
+	}
+
+	hugePromise.reduce((p, x) => p.then(() => myPromise(x)), Promise.resolve());
+}
+let sum = 0;
+const myPromise = (num) =>
+	hiddenRender.display(num).then(() => {
+		sum += hiddenRender.currentLocation().start.displayed.total;
+		console.log(sum);
+	});
+const sleep = (ms) =>
+	new Promise((res) => {
+		setTimeout(res, ms);
+	});
+
 
 function renderToc() {
     let tocHtml = '';

@@ -142,7 +142,7 @@ function checkBookUrl() {
  * Initiate Book
  */
 function initBook() {
-    book = ePub(BOOK_URL);
+    book = ePub('/assets/Alatchakra.epub');
 }
 
 /**
@@ -154,8 +154,8 @@ async function renderBook() {
 
         rendition = book.renderTo("reader-view", {
             width: '100%',
-            height: 'calc(100vh - 57px)',
-            flow: 'scrolled',
+            height: '100%',
+            flow: 'paginated',
             manager: 'continuous',
             snap: true
         });
@@ -165,6 +165,11 @@ async function renderBook() {
             renderToc()
         });
         rendition.display();
+        document.addEventListener("keyup", event => {
+            let kc = event.keyCode || event.which;
+            if (kc == 37) rendition.prev();
+            if (kc == 39) rendition.next();
+        });
        
 
         // add effect on reader scroll
@@ -225,12 +230,12 @@ async function renderBook() {
 
 
         book.ready.then(() => {
-            book.locations.generate(1024).then(data => {
-                BOOK_PROGRESS_RANGER.removeAttribute('disabled')
-                TOTAL_PAGE_ELEMENT.textContent = book.locations.total;
-                BOOK_PROGRESS_RANGER.value = book.rendition.currentLocation().end.percentage * 100;
-                CURRENT_PAGE_ELEMENT.textContent = book.rendition.currentLocation().end.location;
-            })
+            // book.locations.generate(1024).then(data => {
+            //     BOOK_PROGRESS_RANGER.removeAttribute('disabled')
+            //     TOTAL_PAGE_ELEMENT.textContent = book.locations.total;
+            //     BOOK_PROGRESS_RANGER.value = book.rendition.currentLocation().end.percentage * 100;
+            //     CURRENT_PAGE_ELEMENT.textContent = book.rendition.currentLocation().end.location;
+            // })
         });
 
         rendition.on("relocated", (location) => {
@@ -285,28 +290,50 @@ async function loadBookInfo() {
 let hiddenRender;
 getTotalPage();
 function getTotalPage() {
-	//
-	const hiddenBook = ePub(BOOK_URL);
-	hiddenRender = hiddenBook.renderTo("reader-view-hidden", {
-		width: "100%",
-		height: "calc(100vh - 57px)",
-		flow: "scrolled",
+    
+    const container = document.createElement('div')
+    container.setAttribute('id', 'reader-container');
+    container.style.visibility = 'hidden';
+    container.style.overflow = "hidden";
+    container.style.height = 0;
+    container.style.width = 0;
+    ReaderElement =document.querySelector('#reader-view').getBoundingClientRect()
+    
+    const hiddenEpubElement = document.createElement('div');
+    hiddenEpubElement.setAttribute('id', 'reader-hidden');
+    hiddenEpubElement.style.visibility = 'hidden';
+    hiddenEpubElement.style.overflow = "hidden";
+    hiddenEpubElement.style.height = ReaderElement.height +'px';
+    hiddenEpubElement.style.width = ReaderElement.width-20 +'px';
+    
+    container.appendChild(hiddenEpubElement);
+    document.body.appendChild(container);
+    
+
+    
+	const hiddenBook = ePub('/assets/Alatchakra.epub');
+
+	hiddenRender = hiddenBook.renderTo(hiddenEpubElement, {
+		width: ReaderElement.width,
+		height: ReaderElement.height-20,
+		flow: "paginated",
 		manager: "continuous",
 		snap: true,
 	});
+    hiddenRender.display()
 
-	let hugePromise = [];
-	for (let index = 1; index < 145; index++) {
-		hugePromise.push(index);
-	}
+    book.loaded.spine.then((data) => {
+        data.items.reduce((p, x) => p.then(() => myPromise(x.href)), Promise.resolve());
+    })
 
-	hugePromise.reduce((p, x) => p.then(() => myPromise(x)), Promise.resolve());
+	
+	
 }
 let sum = 0;
 const myPromise = (num) =>
 	hiddenRender.display(num).then(() => {
 		sum += hiddenRender.currentLocation().start.displayed.total;
-		console.log(sum);
+		console.log(hiddenRender.currentLocation(), sum);
 	});
 const sleep = (ms) =>
 	new Promise((res) => {

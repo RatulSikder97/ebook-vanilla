@@ -97,8 +97,7 @@ function changeTheme(theme) {
  */
 function highlightSelection(color) {
 	rendition.annotations.highlight(
-		selectedCfi,
-		{},
+		selectedCfi, {},
 		(e) => {
 			console.log(e);
 		},
@@ -211,6 +210,7 @@ async function renderBook() {
 			let currentPage = book.locations.percentageFromCfi(
 				currentLocation.start.cfi,
 			);
+			console.log(currentPage);
 			BOOK_PROGRESS_RANGER.value = currentPage;
 		});
 
@@ -235,9 +235,8 @@ async function renderBook() {
 				(e) => {
 					showTopBar = true;
 					// cfiFromPercentage
-					rendition.display(
-						book.locations.cfiFromPercentage(BookPercentage / 100),
-					);
+
+					rendition.display(book.locations.cfiFromPercentage(e.target.value/100));
 				},
 				false,
 			);
@@ -255,31 +254,31 @@ async function renderBook() {
 		});
 
 		book.ready.then(() => {
-			// book.locations.generate(1024).then(data => {
-			//     BOOK_PROGRESS_RANGER.removeAttribute('disabled')
-			//     TOTAL_PAGE_ELEMENT.textContent = book.locations.total;
-			//     BOOK_PROGRESS_RANGER.value = book.rendition.currentLocation().end.percentage * 100;
-			//     CURRENT_PAGE_ELEMENT.textContent = book.rendition.currentLocation().end.location;
-			// })
+			book.locations.generate(1024).then((data) => {
+				BOOK_PROGRESS_RANGER.removeAttribute("disabled");
+				BOOK_PROGRESS_RANGER.value =
+					book.rendition.currentLocation().end.percentage * 100;
+			});
 		});
 
 		rendition.on("relocated", (location) => {
 			BookPercentage = Math.floor(
 				((book.rendition.currentLocation().start.displayed.page +
-					(book.rendition.currentLocation().end.index == 0
-						? 0
-						: PageListBase[book.rendition.currentLocation().end.index - 1])) /
+						(book.rendition.currentLocation().end.index == 0 ?
+							0 :
+							PageListBase[book.rendition.currentLocation().end.index - 1])) /
 					BookTotalPage) *
-					100,
+				100,
 			);
 			if (!mouseDown) {
-				BOOK_PROGRESS_RANGER.value = BookPercentage;
+				BOOK_PROGRESS_RANGER.value =
+					book.rendition.currentLocation().end.percentage * 100;
 			}
 			CURRENT_PAGE_ELEMENT.textContent =
 				book.rendition.currentLocation().start.displayed.page +
-				(book.rendition.currentLocation().end.index == 0
-					? 0
-					: PageListBase[book.rendition.currentLocation().end.index - 1]);
+				(book.rendition.currentLocation().end.index == 0 ?
+					0 :
+					PageListBase[book.rendition.currentLocation().end.index - 1]);
 		});
 
 		rendition.on("selected", (cfi, content) => {
@@ -289,7 +288,12 @@ async function renderBook() {
 			let range = epubSelection.getRangeAt(0),
 				clientRects = range.getBoundingClientRect();
 
-			const { left, right, top, bottom } = getRect(range, frame);
+			const {
+				left,
+				right,
+				top,
+				bottom
+			} = getRect(range, frame);
 
 			selectedCfi = cfi;
 			selectedContent = epubSelection.toString();
@@ -356,25 +360,25 @@ function getTotalPage() {
 	});
 
 	generatePagination(hiddenBook, hiddenRender).then((data) => {
-		console.log(data);
 		hiddenRender.destroy();
 		document.querySelector("#reader-container").remove();
 		PageListBase = data.pageListBase;
+
 		BOOK_PROGRESS_RANGER.removeAttribute("disabled");
 		BookTotalPage = data.totalPage;
 		TOTAL_PAGE_ELEMENT.textContent = data.totalPage;
 		BOOK_PROGRESS_RANGER.value =
 			((book.rendition.currentLocation().start.displayed.page +
-				(book.rendition.currentLocation().end.index == 0
-					? 0
-					: PageListBase[book.rendition.currentLocation().end.index - 1])) /
+					(book.rendition.currentLocation().end.index == 0 ?
+						0 :
+						PageListBase[book.rendition.currentLocation().end.index - 1])) /
 				data.totalPage) *
 			100;
 		CURRENT_PAGE_ELEMENT.textContent =
 			book.rendition.currentLocation().start.displayed.page +
-			(book.rendition.currentLocation().end.index == 0
-				? 0
-				: PageListBase[book.rendition.currentLocation().end.index - 1]);
+			(book.rendition.currentLocation().end.index == 0 ?
+				0 :
+				PageListBase[book.rendition.currentLocation().end.index - 1]);
 	});
 }
 
@@ -385,12 +389,12 @@ function generatePagination(bookInp, renderer) {
 	return bookInp.loaded.spine.then(async (data) => {
 		await data.items.reduce(
 			(p, x) =>
-				p.then(async () => {
-					await renderer.display(x.href);
-					totalPage += renderer.currentLocation().start.displayed.total;
-					chapterBase.push(totalPage);
-					console.log(chapterBase, totalPage);
-				}),
+			p.then(async () => {
+				await renderer.display(x.href);
+				totalPage += renderer.currentLocation().start.displayed.total;
+				chapterBase.push(totalPage);
+				console.log(chapterBase, totalPage);
+			}),
 			Promise.resolve(),
 		);
 
@@ -480,12 +484,12 @@ FONT_RESIZE_RANGE.addEventListener("change", (e) => {
  */
 const getRect = (target, frame) => {
 	const rect = target.getBoundingClientRect();
-	const viewElementRect = frame
-		? frame.getBoundingClientRect()
-		: {
-				left: 0,
-				top: 0,
-		  };
+	const viewElementRect = frame ?
+		frame.getBoundingClientRect() :
+		{
+			left: 0,
+			top: 0,
+		};
 	const left = rect.left + viewElementRect.left;
 	const right = rect.right + viewElementRect.left;
 	const top = rect.top + viewElementRect.top;

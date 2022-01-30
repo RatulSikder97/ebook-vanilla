@@ -46,82 +46,81 @@ let bookAuthor;
 let selectedCfi;
 let selectedContent;
 let epubSelection;
+let PageListBase = [];
+let BookTotalPage = 0;
+let BookPercentage = 0;
 
 renderBookHighlighterColor();
 renderBookThemeChangeCard();
 renderBook();
 
-
 /**
- * 
+ *
  */
 function renderBookThemeChangeCard() {
-    let bookThemeHtml = '';
-    BOOK_THEME.forEach(data => {
-        bookThemeHtml += `<div class="item ${data}" onclick="changeTheme('${data}')"></div>`
-    });
+	let bookThemeHtml = "";
+	BOOK_THEME.forEach((data) => {
+		bookThemeHtml += `<div class="item ${data}" onclick="changeTheme('${data}')"></div>`;
+	});
 
-    BOOK_THEME_CARD.innerHTML = bookThemeHtml;
+	BOOK_THEME_CARD.innerHTML = bookThemeHtml;
 }
 
-
 /**
- * 
+ *
  */
 function renderBookHighlighterColor() {
-    let bookHighlightColorHtml = '';
-    BOOK_HIGHLIGHT_COLORS.forEach(data => {
-        bookHighlightColorHtml += `<div class="${data}" onclick="highlightSelection('${data}')"></div>`
-    });
+	let bookHighlightColorHtml = "";
+	BOOK_HIGHLIGHT_COLORS.forEach((data) => {
+		bookHighlightColorHtml += `<div class="${data}" onclick="highlightSelection('${data}')"></div>`;
+	});
 
-    BOOK_HIGHLIGHT_CONTENT.innerHTML = bookHighlightColorHtml;
+	BOOK_HIGHLIGHT_CONTENT.innerHTML = bookHighlightColorHtml;
 }
 
 /**
- * 
- * @param {*} theme 
+ *
+ * @param {*} theme
  */
 function changeTheme(theme) {
-    rendition.themes.register(theme, '/styles/bookTheme.css')
-    rendition.themes.select(theme)
-    BOTTOM_MENU_BAR.classList = [];
-    BOTTOM_MENU_BAR.classList.add(theme)
-    TOP_MENU_BAR.classList = [];
-    TOP_MENU_BAR.classList.add(theme)
+	rendition.themes.register(theme, "/styles/bookTheme.css");
+	rendition.themes.select(theme);
+	BOTTOM_MENU_BAR.classList = [];
+	BOTTOM_MENU_BAR.classList.add(theme);
+	TOP_MENU_BAR.classList = [];
+	TOP_MENU_BAR.classList.add(theme);
 }
-
 
 /**
- * 
- * @param {*} color 
+ *
+ * @param {*} color
  */
 function highlightSelection(color) {
-    rendition.annotations.highlight(
-        selectedCfi,
-        {},
-        (e) => {
-          console.log(e);
-        },
-        'h-' + color
-      );
+	rendition.annotations.highlight(
+		selectedCfi,
+		{},
+		(e) => {
+			console.log(e);
+		},
+		"h-" + color,
+	);
 
-      BOOK_HIGHLIGHTER.style.visibility = 'hidden';
-      epubSelection.removeAllRanges();
+	BOOK_HIGHLIGHTER.style.visibility = "hidden";
+	epubSelection.removeAllRanges();
 }
-
 
 /**
  * User Verification
  * @returns status: boolean
  */
 function userVerification() {
-    if (!USER_ID) {
-        console.log('[ERROR] Invalid Authentication!');
-        return;
-    }
+	if (!USER_ID) {
+		console.log("[ERROR] Invalid Authentication!");
+		return;
+	}
 
-    console.log('[SUCCESS] Authenticate User 😍.');
-    return true;
+	console.log("[SUCCESS] Authenticate User 😍.");
+	return true;
 }
 
 /**
@@ -129,154 +128,188 @@ function userVerification() {
  * @returns status: book status in boolean
  */
 function checkBookUrl() {
-    if (!BOOK_URL) {
-        console.log('[ERROR] BOOK IS NULL!');
-        return;
-    }
+	if (!BOOK_URL) {
+		console.log("[ERROR] BOOK IS NULL!");
+		return;
+	}
 
-    console.log('[SUCCESS] BOOK INITIATED.');
-    return true;
+	console.log("[SUCCESS] BOOK INITIATED.");
+	return true;
 }
 
 /**
  * Initiate Book
  */
 function initBook() {
-    book = ePub('/assets/Alatchakra.epub');
+	book = ePub("/assets/Alatchakra.epub");
 }
 
 /**
  * Main Render Function
  */
 async function renderBook() {
-    if (userVerification() && checkBookUrl()) {
-        initBook();
+	if (userVerification() && checkBookUrl()) {
+		initBook();
 
-        rendition = book.renderTo("reader-view", {
-            width: '100%',
-            height: '100%',
-            flow: 'paginated',
-            manager: 'continuous',
-            snap: true
-        });
+		rendition = book.renderTo("reader-view", {
+			width: "100%",
+			height: "100%",
+			flow: "paginated",
+			manager: "continuous",
+			snap: true,
+		});
 
-        loadBookInfo().then(() => {
-            renderBookMetaInfo(bookCoverImage, metaData.title, metaData.creator)
-            renderToc()
-        });
-        rendition.display();
-        document.addEventListener("keyup", event => {
-            let kc = event.keyCode || event.which;
-            if (kc == 37) rendition.prev();
-            if (kc == 39) rendition.next();
-        });
-       
+		loadBookInfo().then(() => {
+			renderBookMetaInfo(bookCoverImage, metaData.title, metaData.creator);
+			renderToc();
+		});
+		rendition.display();
+		document.addEventListener("keyup", (event) => {
+			let kc = event.keyCode || event.which;
+			if (kc == 37) rendition.prev();
+			if (kc == 39) rendition.next();
+		});
 
-        // add effect on reader scroll
-        rendition.once("rendered", (e, i) => {
-            document.querySelector('.epub-container').addEventListener('scroll', () => {
-                hideAuxElement();
+		// add effect on reader scroll
+		rendition.once("rendered", (e, i) => {
+			document
+				.querySelector(".epub-container")
+				.addEventListener("scroll", () => {
+					hideAuxElement();
 
-                clearTimeout(isScrolling);
-                let onScrollTimer = setTimeout(() => {
-                    if (!showTopBar) {
-                        TOP_MENU_BAR.style.top = '-100%';
-                    }
-                }, 100);
+					clearTimeout(isScrolling);
+					let onScrollTimer = setTimeout(() => {
+						if (!showTopBar) {
+							TOP_MENU_BAR.style.top = "-100%";
+						}
+					}, 100);
 
-                // Set a timeout to run after scrolling ends
-                isScrolling = setTimeout(function () {
-                    clearTimeout(onScrollTimer);
-                    showTopBar = false;
-                    TOP_MENU_BAR.style.top = '0px';
-                }, 1000);
-            });
+					// Set a timeout to run after scrolling ends
+					isScrolling = setTimeout(function () {
+						clearTimeout(onScrollTimer);
+						showTopBar = false;
+						TOP_MENU_BAR.style.top = "0px";
+					}, 1000);
+				});
 
-            BOOK_PROGRESS_RANGER.addEventListener("mousedown", function () {
-                mouseDown = true;
-            }, false);
-            BOOK_PROGRESS_RANGER.addEventListener("mouseup", function () {
-                mouseDown = false;
-            }, false);
+			BOOK_PROGRESS_RANGER.addEventListener(
+				"mousedown",
+				function () {
+					mouseDown = true;
+				},
+				false,
+			);
+			BOOK_PROGRESS_RANGER.addEventListener(
+				"mouseup",
+				function () {
+					mouseDown = false;
+				},
+				false,
+			);
 
-            let currentLocation = rendition.currentLocation();
-            let currentPage = book.locations.percentageFromCfi(currentLocation.start.cfi);
-            BOOK_PROGRESS_RANGER.value = currentPage;
-        });
+			let currentLocation = rendition.currentLocation();
+			let currentPage = book.locations.percentageFromCfi(
+				currentLocation.start.cfi,
+			);
+			BOOK_PROGRESS_RANGER.value = currentPage;
+		});
 
-        rendition.once("displayed", (e, i) => {
+		rendition.once("displayed", (e, i) => {
+			BOOK_PROGRESS_RANGER.addEventListener(
+				"mousedown",
+				function () {
+					mouseDown = true;
+				},
+				false,
+			);
+			BOOK_PROGRESS_RANGER.addEventListener(
+				"mouseup",
+				function () {
+					mouseDown = false;
+				},
+				false,
+			);
 
-            BOOK_PROGRESS_RANGER.addEventListener("mousedown", function () {
-                mouseDown = true;
-            }, false);
-            BOOK_PROGRESS_RANGER.addEventListener("mouseup", function () {
-                mouseDown = false;
-            }, false);
+			BOOK_PROGRESS_RANGER.addEventListener(
+				"change",
+				(e) => {
+					showTopBar = true;
+					// cfiFromPercentage
+					rendition.display(
+						book.locations.cfiFromPercentage(BookPercentage / 100),
+					);
+				},
+				false,
+			);
 
-            BOOK_PROGRESS_RANGER.addEventListener('change', (e) => {
-                showTopBar = true;
-                // cfiFromPercentage
-                rendition.display(book.locations.cfiFromPercentage(e.target.value / 100));
-            }, false);
+			let currentLocation = rendition.currentLocation();
+			let currentPage = book.locations.percentageFromCfi(
+				currentLocation.start.cfi,
+			);
+			BOOK_PROGRESS_RANGER.value = currentPage;
+			getTotalPage();
+		});
 
-            let currentLocation = rendition.currentLocation();
-            let currentPage = book.locations.percentageFromCfi(currentLocation.start.cfi);
-            BOOK_PROGRESS_RANGER.value = currentPage;
-        });
+		rendition.on("click", () => {
+			hideAuxElement();
+		});
 
-        rendition.on('click', () => {
-            hideAuxElement();
-        });
+		book.ready.then(() => {
+			// book.locations.generate(1024).then(data => {
+			//     BOOK_PROGRESS_RANGER.removeAttribute('disabled')
+			//     TOTAL_PAGE_ELEMENT.textContent = book.locations.total;
+			//     BOOK_PROGRESS_RANGER.value = book.rendition.currentLocation().end.percentage * 100;
+			//     CURRENT_PAGE_ELEMENT.textContent = book.rendition.currentLocation().end.location;
+			// })
+		});
 
+		rendition.on("relocated", (location) => {
+			BookPercentage = Math.floor(
+				((book.rendition.currentLocation().start.displayed.page +
+					(book.rendition.currentLocation().end.index == 0
+						? 0
+						: PageListBase[book.rendition.currentLocation().end.index - 1])) /
+					BookTotalPage) *
+					100,
+			);
+			if (!mouseDown) {
+				BOOK_PROGRESS_RANGER.value = BookPercentage;
+			}
+			CURRENT_PAGE_ELEMENT.textContent =
+				book.rendition.currentLocation().start.displayed.page +
+				(book.rendition.currentLocation().end.index == 0
+					? 0
+					: PageListBase[book.rendition.currentLocation().end.index - 1]);
+		});
 
-        book.ready.then(() => {
-            // book.locations.generate(1024).then(data => {
-            //     BOOK_PROGRESS_RANGER.removeAttribute('disabled')
-            //     TOTAL_PAGE_ELEMENT.textContent = book.locations.total;
-            //     BOOK_PROGRESS_RANGER.value = book.rendition.currentLocation().end.percentage * 100;
-            //     CURRENT_PAGE_ELEMENT.textContent = book.rendition.currentLocation().end.location;
-            // })
-        });
+		rendition.on("selected", (cfi, content) => {
+			epubSelection = content.window.getSelection();
+			const frame = content.document.defaultView.frameElement;
 
-        rendition.on("relocated", (location) => {
+			let range = epubSelection.getRangeAt(0),
+				clientRects = range.getBoundingClientRect();
 
-            let percent = book.locations.percentageFromCfi(location.start.cfi);
-            let percentage = Math.floor(percent * 100);
-            if (!mouseDown) {
-                BOOK_PROGRESS_RANGER.value = percentage;
-            }
-            CURRENT_PAGE_ELEMENT.textContent = location.end.location;
-        });
+			const { left, right, top, bottom } = getRect(range, frame);
 
-        rendition.on('selected', (cfi, content) => {
-            epubSelection = content.window.getSelection();
-            const frame = content.document.defaultView.frameElement;
-  
-            let range = epubSelection.getRangeAt(0),
-              clientRects = range.getBoundingClientRect();
-  
-            const { left, right, top, bottom } = getRect(range, frame);
-  
-            selectedCfi = cfi;
-            selectedContent = epubSelection.toString();
-            BOOK_HIGHLIGHTER.style.top = bottom + 'px';
-            if (left + 180 >= window.innerWidth) {
-              BOOK_HIGHLIGHTER.style.left = left - 100 + 'px';
-            } else if (left - 30 < 0) {
-              BOOK_HIGHLIGHTER.style.left = 30 + 'px';
-            } else {
-              BOOK_HIGHLIGHTER.style.left = left + 'px';
-            }
-  
-            if (epubSelection.toString().length > 0) {
-              BOOK_HIGHLIGHTER.style.visibility = 'visible';
-            } else {
-              BOOK_HIGHLIGHTER.style.visibility = 'hidden';
-            }
-          });
-    }
+			selectedCfi = cfi;
+			selectedContent = epubSelection.toString();
+			BOOK_HIGHLIGHTER.style.top = bottom + "px";
+			if (left + 180 >= window.innerWidth) {
+				BOOK_HIGHLIGHTER.style.left = left - 100 + "px";
+			} else if (left - 30 < 0) {
+				BOOK_HIGHLIGHTER.style.left = 30 + "px";
+			} else {
+				BOOK_HIGHLIGHTER.style.left = left + "px";
+			}
+
+			if (epubSelection.toString().length > 0) {
+				BOOK_HIGHLIGHTER.style.visibility = "visible";
+			} else {
+				BOOK_HIGHLIGHTER.style.visibility = "hidden";
+			}
+		});
+	}
 }
-
 
 async function loadBookInfo() {
 	metaData = await book.loaded.metadata;
@@ -285,10 +318,12 @@ async function loadBookInfo() {
 
 	// load cover image
 	let cover = await book.loaded.cover;
-	bookCoverImage = await book.archive.createUrl(cover, { base64: true });
+	bookCoverImage = await book.archive.createUrl(cover, {
+		base64: true,
+	});
 }
 let hiddenRender;
-getTotalPage();
+
 function getTotalPage() {
 	const container = document.createElement("div");
 	container.setAttribute("id", "reader-container");
@@ -322,10 +357,29 @@ function getTotalPage() {
 
 	generatePagination(hiddenBook, hiddenRender).then((data) => {
 		console.log(data);
+		hiddenRender.destroy();
+		document.querySelector("#reader-container").remove();
+		PageListBase = data.pageListBase;
+		BOOK_PROGRESS_RANGER.removeAttribute("disabled");
+		BookTotalPage = data.totalPage;
+		TOTAL_PAGE_ELEMENT.textContent = data.totalPage;
+		BOOK_PROGRESS_RANGER.value =
+			((book.rendition.currentLocation().start.displayed.page +
+				(book.rendition.currentLocation().end.index == 0
+					? 0
+					: PageListBase[book.rendition.currentLocation().end.index - 1])) /
+				data.totalPage) *
+			100;
+		CURRENT_PAGE_ELEMENT.textContent =
+			book.rendition.currentLocation().start.displayed.page +
+			(book.rendition.currentLocation().end.index == 0
+				? 0
+				: PageListBase[book.rendition.currentLocation().end.index - 1]);
 	});
 }
 
 function generatePagination(bookInp, renderer) {
+	book.rendition.display(0);
 	let totalPage = 0;
 	let chapterBase = [];
 	return bookInp.loaded.spine.then(async (data) => {
@@ -349,88 +403,97 @@ function generatePagination(bookInp, renderer) {
 	});
 }
 
-
 function renderToc() {
-    let tocHtml = '';
-    navigation.toc.forEach((data, index) => {
-        tocHtml += `<div class="item" onclick="goToChapter('${data.href}')">
+	let tocHtml = "";
+	navigation.toc.forEach((data, index) => {
+		tocHtml += `<div class="item" onclick="goToChapter('${data.href}')">
                         <p class="label"> ${data.label}</p>
                         <img src="/assets/icons/circle-fill.svg" alt="">
-                    </div>`
-    });
+                    </div>`;
+	});
 
-    TOC_ELEMENT.innerHTML = tocHtml;
+	TOC_ELEMENT.innerHTML = tocHtml;
 }
 /**
- * 
- * @param {*} name 
- * @param {*} author 
+ *
+ * @param {*} name
+ * @param {*} author
  */
 function renderBookMetaInfo(coverImage, name, author) {
-    BOOK_COVER_ELEMENT.src = coverImage;
-    BOOK_NAME_ELEMENT.textContent = name;
-    BOOK_AUTHOR_ELEMENT.textContent = author;
+	BOOK_COVER_ELEMENT.src = coverImage;
+	BOOK_NAME_ELEMENT.textContent = name;
+	BOOK_AUTHOR_ELEMENT.textContent = author;
 }
 
 function goToChapter(chapter) {
-    rendition.display(chapter).then(() => {
-        document.querySelector('.epub-view').scrollTo(0, 0);
-        BOOK_META_ELEMENT.style.display = 'none';
-        OVERLAY.style.display = 'none';
+	rendition.display(chapter).then(() => {
+		document.querySelector(".epub-view").scrollTo(0, 0);
+		BOOK_META_ELEMENT.style.display = "none";
+		OVERLAY.style.display = "none";
 
-        rendition.display(chapter);
-    });
-    showTopBar = true;
+		rendition.display(chapter);
+	});
+	showTopBar = true;
 }
 
 function hideAuxElement() {
-    BOOK_THEME_CARD.style.display = 'none';
-    BOOK_META_ELEMENT.style.display = 'none';
-    FONT_RESIZE_CARD.style.display = 'none';
+	BOOK_THEME_CARD.style.display = "none";
+	BOOK_META_ELEMENT.style.display = "none";
+	FONT_RESIZE_CARD.style.display = "none";
 }
 
-OVERLAY.addEventListener('click', () => {
-    BOOK_META_ELEMENT.style.display = 'none';
-    OVERLAY.style.display = 'none';
+OVERLAY.addEventListener("click", () => {
+	BOOK_META_ELEMENT.style.display = "none";
+	OVERLAY.style.display = "none";
 });
 
+MENU_BTN.addEventListener(
+	"click",
+	() => {
+		hideAuxElement();
+		BOOK_META_ELEMENT.style.display = "block";
+		OVERLAY.style.display = "block";
+	},
+	false,
+);
 
-MENU_BTN.addEventListener('click', () => {
-    hideAuxElement();
-    BOOK_META_ELEMENT.style.display = 'block';
-    OVERLAY.style.display = 'block';
-}, false);
-
-THEME_CHANGE_BTN.addEventListener('click', () => {
-    hideAuxElement();
-    BOOK_THEME_CARD.style.display = 'flex';
+THEME_CHANGE_BTN.addEventListener("click", () => {
+	hideAuxElement();
+	BOOK_THEME_CARD.style.display = "flex";
 });
 
-FONT_SIZE_CHANGE_BTN.addEventListener('click', () => {
-    hideAuxElement()
-    FONT_RESIZE_CARD.style.display = 'flex';
+FONT_SIZE_CHANGE_BTN.addEventListener("click", () => {
+	hideAuxElement();
+	FONT_RESIZE_CARD.style.display = "flex";
 });
 
-
-FONT_RESIZE_RANGE.addEventListener('change', (e) => {
-    rendition.themes.fontSize(e.target.value+'px');
-    showTopBar = true;
+FONT_RESIZE_RANGE.addEventListener("change", (e) => {
+	rendition.themes.fontSize(e.target.value + "px");
+	showTopBar = true;
 });
 
 /**
- * 
- * @param {*} target 
- * @param {*} frame 
- * @returns 
+ *
+ * @param {*} target
+ * @param {*} frame
+ * @returns
  */
 const getRect = (target, frame) => {
-    const rect = target.getBoundingClientRect();
-    const viewElementRect = frame
-      ? frame.getBoundingClientRect()
-      : { left: 0, top: 0 };
-    const left = rect.left + viewElementRect.left;
-    const right = rect.right + viewElementRect.left;
-    const top = rect.top + viewElementRect.top;
-    const bottom = rect.bottom + viewElementRect.top;
-    return { left, right, top, bottom };
-  };
+	const rect = target.getBoundingClientRect();
+	const viewElementRect = frame
+		? frame.getBoundingClientRect()
+		: {
+				left: 0,
+				top: 0,
+		  };
+	const left = rect.left + viewElementRect.left;
+	const right = rect.right + viewElementRect.left;
+	const top = rect.top + viewElementRect.top;
+	const bottom = rect.bottom + viewElementRect.top;
+	return {
+		left,
+		right,
+		top,
+		bottom,
+	};
+};

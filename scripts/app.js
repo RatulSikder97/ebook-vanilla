@@ -290,55 +290,64 @@ async function loadBookInfo() {
 let hiddenRender;
 getTotalPage();
 function getTotalPage() {
-    
-    const container = document.createElement('div')
-    container.setAttribute('id', 'reader-container');
-    container.style.visibility = 'hidden';
-    container.style.overflow = "hidden";
-    container.style.height = 0;
-    container.style.width = 0;
-    ReaderElement =document.querySelector('#reader-view').getBoundingClientRect()
-    
-    const hiddenEpubElement = document.createElement('div');
-    hiddenEpubElement.setAttribute('id', 'reader-hidden');
-    hiddenEpubElement.style.visibility = 'hidden';
-    hiddenEpubElement.style.overflow = "hidden";
-    hiddenEpubElement.style.height = ReaderElement.height +'px';
-    hiddenEpubElement.style.width = ReaderElement.width-20 +'px';
-    
-    container.appendChild(hiddenEpubElement);
-    document.body.appendChild(container);
-    
+	const container = document.createElement("div");
+	container.setAttribute("id", "reader-container");
+	container.style.visibility = "hidden";
+	container.style.overflow = "hidden";
+	container.style.height = 0;
+	container.style.width = 0;
+	ReaderElement = document
+		.querySelector("#reader-view")
+		.getBoundingClientRect();
 
-    
-	const hiddenBook = ePub('/assets/Alatchakra.epub');
+	const hiddenEpubElement = document.createElement("div");
+	hiddenEpubElement.setAttribute("id", "reader-hidden");
+	hiddenEpubElement.style.visibility = "hidden";
+	hiddenEpubElement.style.overflow = "hidden";
+	hiddenEpubElement.style.height = ReaderElement.height + "px";
+	hiddenEpubElement.style.width = ReaderElement.width - 20 + "px";
+
+	container.appendChild(hiddenEpubElement);
+	document.body.appendChild(container);
+
+	const hiddenBook = ePub("/assets/Alatchakra.epub");
 
 	hiddenRender = hiddenBook.renderTo(hiddenEpubElement, {
 		width: ReaderElement.width,
-		height: ReaderElement.height-20,
+		height: ReaderElement.height - 20,
 		flow: "paginated",
 		manager: "continuous",
 		snap: true,
 	});
-    hiddenRender.display()
 
-    book.loaded.spine.then((data) => {
-        data.items.reduce((p, x) => p.then(() => myPromise(x.href)), Promise.resolve());
-    })
-
-	
-	
+	generatePagination(hiddenBook, hiddenRender).then((data) => {
+		console.log(data);
+	});
 }
-let sum = 0;
-const myPromise = (num) =>
-	hiddenRender.display(num).then(() => {
-		sum += hiddenRender.currentLocation().start.displayed.total;
-		console.log(hiddenRender.currentLocation(), sum);
+
+function generatePagination(bookInp, renderer) {
+	let totalPage = 0;
+	let chapterBase = [];
+	return bookInp.loaded.spine.then(async (data) => {
+		await data.items.reduce(
+			(p, x) =>
+				p.then(async () => {
+					await renderer.display(x.href);
+					totalPage += renderer.currentLocation().start.displayed.total;
+					chapterBase.push(totalPage);
+					console.log(chapterBase, totalPage);
+				}),
+			Promise.resolve(),
+		);
+
+		return new Promise((res) => {
+			res({
+				pageListBase: chapterBase,
+				totalPage: totalPage,
+			});
+		});
 	});
-const sleep = (ms) =>
-	new Promise((res) => {
-		setTimeout(res, ms);
-	});
+}
 
 
 function renderToc() {

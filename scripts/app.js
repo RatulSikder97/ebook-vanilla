@@ -1,6 +1,7 @@
 let param = URLSearchParams && new URLSearchParams(document.location.search.substring(1));
 const BOOK_URL = param && param.get('url') && decodeURIComponent(param.get('url'));
 const USER_ID = param && param.get('userId') && decodeURIComponent(param.get('userId'));
+const BOOK_ID = param && param.get('bookId') && decodeURIComponent(param.get('bookId'));
 
 // ELEMENTS
 const BOOK_RENDER_VIEWER = document.querySelector('#reader-view');
@@ -49,7 +50,7 @@ let epubSelection;
 let PageListBase = [];
 let BookTotalPage = 0;
 let BookPercentage = 0;
-
+let lastReadLocation = localStorage.getItem(BOOK_ID) ? localStorage.getItem(BOOK_ID) : '';
 renderBookHighlighterColor();
 renderBookThemeChangeCard();
 renderBook();
@@ -162,7 +163,7 @@ async function renderBook() {
 			renderBookMetaInfo(bookCoverImage, metaData.title, metaData.creator);
 			renderToc();
 		});
-		rendition.display();
+		rendition.display(lastReadLocation == '' ? 0 : lastReadLocation);
 		document.addEventListener("keyup", (event) => {
 			let kc = event.keyCode || event.which;
 			if (kc == 37) rendition.prev();
@@ -270,6 +271,11 @@ async function renderBook() {
 					BookTotalPage) *
 				100,
 			);
+
+			lastReadLocation = rendition.currentLocation().start.cfi;
+			localStorage.setItem(BOOK_ID, rendition.currentLocation().start.cfi)
+
+
 			if (!mouseDown) {
 				BOOK_PROGRESS_RANGER.value =
 					book.rendition.currentLocation().end.percentage * 100;
@@ -383,7 +389,7 @@ function getTotalPage(fontSize) {
 }
 
 function generatePagination(bookInp, renderer) {
-	book.rendition.display(0);
+	book.rendition.display(lastReadLocation);
 	let totalPage = 0;
 	let chapterBase = [];
 	return bookInp.loaded.spine.then(async (data) => {
@@ -475,7 +481,7 @@ FONT_RESIZE_RANGE.addEventListener("change", (e) => {
 	rendition.themes.fontSize(e.target.value + "px");
 	showTopBar = true;
 	getTotalPage(e.target.value);
-	book.rendition.display(0);
+	book.rendition.display(lastReadLocation);
 });
 
 /**

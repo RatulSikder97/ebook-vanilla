@@ -328,7 +328,7 @@ async function loadBookInfo() {
 }
 let hiddenRender;
 
-function getTotalPage() {
+function getTotalPage(fontSize) {
 	const container = document.createElement("div");
 	container.setAttribute("id", "reader-container");
 	container.style.visibility = "hidden";
@@ -358,7 +358,7 @@ function getTotalPage() {
 		manager: "continuous",
 		snap: true,
 	});
-
+	hiddenRender.themes.fontSize(fontSize+'px')
 	generatePagination(hiddenBook, hiddenRender).then((data) => {
 		hiddenRender.destroy();
 		document.querySelector("#reader-container").remove();
@@ -474,6 +474,8 @@ FONT_SIZE_CHANGE_BTN.addEventListener("click", () => {
 FONT_RESIZE_RANGE.addEventListener("change", (e) => {
 	rendition.themes.fontSize(e.target.value + "px");
 	showTopBar = true;
+	getTotalPage(e.target.value);
+	book.rendition.display(0);
 });
 
 /**

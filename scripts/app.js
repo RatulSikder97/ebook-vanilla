@@ -141,7 +141,7 @@ function checkBookUrl() {
  * Initiate Book
  */
 function initBook() {
-	book = ePub("/assets/Alatchakra.epub");
+	book = ePub(BOOK_ID);
 }
 
 /**
@@ -355,7 +355,7 @@ function getTotalPage(fontSize) {
 	container.appendChild(hiddenEpubElement);
 	document.body.appendChild(container);
 
-	const hiddenBook = ePub("/assets/Alatchakra.epub");
+	const hiddenBook = ePub(BOOK_ID);
 
 	hiddenRender = hiddenBook.renderTo(hiddenEpubElement, {
 		width: ReaderElement.width,

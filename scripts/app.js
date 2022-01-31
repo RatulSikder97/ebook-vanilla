@@ -27,6 +27,13 @@ const BOOK_HIGHLIGHTER = document.querySelector('#js--highlighter');
 
 const BOOK_THEME = ['light', 'brown', 'green', 'purple', 'dark'];
 const BOOK_HIGHLIGHT_COLORS = ['blue', 'orange', 'red'];
+const BOOK_RENDER_OPTION =  {
+	width: "100%",
+	height: "100%",
+	flow: "paginated",
+	manager: "continuous",
+	snap: true,
+};
 
 
 
@@ -151,13 +158,7 @@ async function renderBook() {
 	if (userVerification() && checkBookUrl()) {
 		initBook();
 
-		rendition = book.renderTo("reader-view", {
-			width: "100%",
-			height: "100%",
-			flow: "paginated",
-			manager: "continuous",
-			snap: true,
-		});
+		rendition = book.renderTo("reader-view",BOOK_RENDER_OPTION);
 
 		loadBookInfo().then(() => {
 			renderBookMetaInfo(bookCoverImage, metaData.title, metaData.creator);
@@ -357,13 +358,7 @@ function getTotalPage(fontSize) {
 
 	const hiddenBook = ePub("/assets/Alatchakra.epub");
 
-	hiddenRender = hiddenBook.renderTo(hiddenEpubElement, {
-		width: ReaderElement.width,
-		height: ReaderElement.height - 20,
-		flow: "paginated",
-		manager: "continuous",
-		snap: true,
-	});
+	hiddenRender = hiddenBook.renderTo(hiddenEpubElement, BOOK_RENDER_OPTION);
 	hiddenRender.themes.fontSize(fontSize+'px')
 	generatePagination(hiddenBook, hiddenRender).then((data) => {
 		hiddenRender.destroy();

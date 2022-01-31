@@ -11,6 +11,7 @@ const BOOK_PROGRESS_RANGER = document.querySelector('#js--book-percentage');
 const CURRENT_PAGE_ELEMENT = document.querySelector('#js--current-page');
 const TOTAL_PAGE_ELEMENT = document.querySelector('#js--total-page');
 const TOC_ELEMENT = document.querySelector('#js--toc');
+const BOOKMARK_ELEMENT = document.querySelector('#js--Bookmark');
 const OVERLAY = document.querySelector('#js--overlay');
 const BOOK_META_ELEMENT = document.querySelector('#book-meta-content');
 const MENU_BTN = document.querySelector('#js--menu-btn');
@@ -148,7 +149,7 @@ function checkBookUrl() {
  * Initiate Book
  */
 function initBook() {
-	book = ePub("/assets/Alatchakra.epub");
+	book = ePub("/assets/book/Crime-and-Punishment-Fyodor-Dostoevsky.epub");
 }
 
 /**
@@ -163,6 +164,7 @@ async function renderBook() {
 		loadBookInfo().then(() => {
 			renderBookMetaInfo(bookCoverImage, metaData.title, metaData.creator);
 			renderToc();
+			renderBookmark();
 		});
 		rendition.display(lastReadLocation == '' ? 0 : lastReadLocation);
 		document.addEventListener("keyup", (event) => {
@@ -257,9 +259,7 @@ async function renderBook() {
 
 		book.ready.then(() => {
 			book.locations.generate(1024).then((data) => {
-				BOOK_PROGRESS_RANGER.removeAttribute("disabled");
-				BOOK_PROGRESS_RANGER.value =
-					book.rendition.currentLocation().end.percentage * 100;
+				
 			});
 		});
 
@@ -356,7 +356,7 @@ function getTotalPage(fontSize) {
 	container.appendChild(hiddenEpubElement);
 	document.body.appendChild(container);
 
-	const hiddenBook = ePub("/assets/Alatchakra.epub");
+	const hiddenBook = ePub("/assets/book/Crime-and-Punishment-Fyodor-Dostoevsky.epub");
 
 	hiddenRender = hiddenBook.renderTo(hiddenEpubElement, BOOK_RENDER_OPTION);
 	hiddenRender.themes.fontSize(fontSize+'px')
@@ -419,6 +419,20 @@ function renderToc() {
 
 	TOC_ELEMENT.innerHTML = tocHtml;
 }
+
+
+function renderBookmark(bookmark = []) {
+	let tocHtml = "";
+	navigation.toc.forEach((data, index) => {
+		tocHtml += `<div class="item" onclick="goToChapter('${data.href}')">
+                        <p class="label"> ${data.label} Bookmark</p>
+                        <img src="/assets/icons/circle-fill.svg" alt="">
+                    </div>`;
+	});
+
+	BOOKMARK_ELEMENT.innerHTML = tocHtml;
+}
+
 /**
  *
  * @param {*} name
@@ -504,3 +518,18 @@ const getRect = (target, frame) => {
 		bottom,
 	};
 };
+
+
+// ui component actions
+$('.btn-nav-drawer').on('click', function() {
+	$('.btn-nav-drawer').each((i, ele) => {
+		$(ele).removeClass('active');
+	})
+	$(this).addClass('active');
+
+	$('.nav-tab-item').each((i, ele) => {
+		$(ele).removeClass('active');
+	})
+
+	$('#'+$(this).data('target')+'-container').addClass('active');
+});

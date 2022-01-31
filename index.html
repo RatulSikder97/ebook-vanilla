@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -10,6 +11,7 @@
     <script src="/scripts/epub.js"></script>
     <title>Rokomari EBook Reader</title>
 </head>
+
 <body>
     <main>
         <section id="top-menu-bar">
@@ -17,17 +19,17 @@
                 <button class="btn btn-action" id="js--back-btn">
                     <img src="/assets/icons/previous.svg" alt="menu icon">
                 </button>
-        
+
                 <button class="btn btn-action mx-2" id="js--menu-btn">
                     <img src="/assets/icons/menu.svg" alt="menu icon">
                 </button>
             </div>
-    
-            <div class="right-menu" >
+
+            <div class="right-menu">
                 <button class="btn btn-action" id="js--font-size-btn">
                     <img src="/assets/icons/font_style.svg" alt="menu icon">
                 </button>
-        
+
                 <button class="btn btn-action mx-2" id="js--theme-change-btn">
                     <img src="/assets/icons/brightness_1.svg" alt="menu icon">
                 </button>
@@ -37,18 +39,18 @@
                 </button>
             </div>
         </section>
-    
+
         <section id="reader-view">
-       
-            
+
+
         </section>
 
         <section id="bottom-menu-bar">
-            <input type="range" min="0" max="100" value="0"  class="slider" id="js--book-percentage" disabled>
+            <input type="range" min="0" max="100" value="0" class="slider" id="js--book-percentage" disabled>
             <div class="page"><span id="js--current-page">0</span> of <span id="js--total-page">0</span></div>
         </section>
 
-        <section id="book-meta-content" >
+        <section id="book-meta-content">
 
             <div class="book-info">
                 <img src="" alt="" id="js--cover-img">
@@ -59,16 +61,26 @@
                 </div>
             </div>
 
-           <div class="content">
-                <div id="js--toc">
+            <div class="content" id="js--drawer-content">
+                <div class="nav-tab-item active" id="toc-container">
+                    <div id="js--toc">
+                    </div>
                 </div>
+                <div class="nav-tab-item" id="highlight-container">
+                    <div id="js--Highlight">
+                    </div>
+                </div>
+                <div class="nav-tab-item" id="bookmark-container">
+                    <div id="js--Bookmark">
+                    </div>
+                </div>
+            </div>
 
-                <div id="js--Highlight">
-                </div>
-
-                <div id="js--Bookmark">
-                </div>
-           </div>
+            <div class="content-menu-container">
+                <button class="btn btn-nav-drawer active" data-target="toc">Index</button>
+                <button class="btn btn-nav-drawer" data-target="bookmark">Bookmark</button>
+                <button class="btn btn-nav-drawer" data-target="highlight">Highlight</button>
+            </div>
         </section>
         <div id="js--overlay" class="overlay"></div>
 
@@ -78,33 +90,35 @@
 
 
         <section class="font-sizer" id="js--font-sizer">
-              <h6>A</h6>
-              <div class="ranger-custom w-100 mx-2">
-                <input type="range" name="" id="js--font-resize-ranger" class="w-100 mx-2" min="10" max="20" step="1" >
+            <h6>A</h6>
+            <div class="ranger-custom w-100 mx-2">
+                <input type="range" name="" id="js--font-resize-ranger" class="w-100 mx-2" min="10" max="20" step="1">
                 <div class="ticks">
-                  <span class="tick"></span>
-                  <span class="tick"></span>
-                  <span class="tick"></span>
-                  <span class="tick"></span>
-                  <span class="tick"></span>
-                  <span class="tick"></span>
-                  <span class="tick"></span>
-                  <span class="tick"></span>
-                  <span class="tick"></span>
-                  <span class="tick"></span>
-                  <span class="tick"></span>
+                    <span class="tick"></span>
+                    <span class="tick"></span>
+                    <span class="tick"></span>
+                    <span class="tick"></span>
+                    <span class="tick"></span>
+                    <span class="tick"></span>
+                    <span class="tick"></span>
+                    <span class="tick"></span>
+                    <span class="tick"></span>
+                    <span class="tick"></span>
+                    <span class="tick"></span>
                 </div>
-              </div>
-              <h1 class="ml-2">A</h1>
+            </div>
+            <h1 class="ml-2">A</h1>
         </section>
 
-        <section class="highlight"  id="js--highlighter">
+        <section class="highlight" id="js--highlighter">
             <div class="colors" id="js--highlight-colors">
             </div>
-          </section>
+        </section>
     </main>
 
-    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="/scripts/app.js"></script>
 </body>
+
 </html>

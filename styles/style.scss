@@ -275,13 +275,13 @@ main {
         .item {
             display: flex;
             align-items: center;
+            
 
             p {
                 width: 200px;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
-                margin-bottom: 10px;
             }
 
             img {
@@ -290,7 +290,53 @@ main {
             }
         }
     }
+
+    .content-menu-container {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: lighten(map-get($colorsLight, bodyColor), 5);
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        .btn {
+            border: none;
+            outline: none;
+            background: transparent;
+            font-size: 16px;
+           
+            &.btn-nav-drawer {
+                &.active {
+                    color: map-get($colorsLight, accentColor );
+                    font-weight: 600;
+                }
+            }
+
+        }
+    }
+
+    
+    .nav-tab-item {
+        position: absolute;
+        top: 100px;
+        left: -100%;
+        bottom: 90px;
+        visibility: hidden;
+        padding: 20px;
+        overflow-y: scroll;
+        height: 100%;
+        transition: left 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+
+        &.active {
+           visibility: visible;
+           left: 0;
+        }
+    }
 }
+
+
 
 .overlay {
     background-color: #0009;

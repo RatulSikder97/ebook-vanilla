@@ -149,7 +149,7 @@ function checkBookUrl() {
  * Initiate Book
  */
 function initBook() {
-	book = ePub("/assets/book/Crime-and-Punishment-Fyodor-Dostoevsky.epub");
+	book = ePub("/assets/book/moby-dick.epub");
 }
 
 /**
@@ -166,7 +166,8 @@ async function renderBook() {
 			renderToc();
 			renderBookmark();
 		});
-		rendition.display(lastReadLocation == '' ? 0 : lastReadLocation);
+		lastReadLocation == '' ? rendition.display() : rendition.display(lastReadLocation);
+		
 		document.addEventListener("keyup", (event) => {
 			let kc = event.keyCode || event.which;
 			if (kc == 37) rendition.prev();
@@ -350,15 +351,21 @@ function getTotalPage(fontSize) {
 	hiddenEpubElement.setAttribute("id", "reader-hidden");
 	hiddenEpubElement.style.visibility = "hidden";
 	hiddenEpubElement.style.overflow = "hidden";
-	hiddenEpubElement.style.height = ReaderElement.height + "px";
-	hiddenEpubElement.style.width = ReaderElement.width - 20 + "px";
+	hiddenEpubElement.style.height = ReaderElement.height -20 + "px";
+	hiddenEpubElement.style.width = ReaderElement.width + "px";
 
 	container.appendChild(hiddenEpubElement);
 	document.body.appendChild(container);
 
-	const hiddenBook = ePub("/assets/book/Crime-and-Punishment-Fyodor-Dostoevsky.epub");
+	const hiddenBook = ePub("/assets/book/moby-dick.epub");
 
-	hiddenRender = hiddenBook.renderTo(hiddenEpubElement, BOOK_RENDER_OPTION);
+	hiddenRender = hiddenBook.renderTo(hiddenEpubElement, {
+		width: ReaderElement.width,
+		height: ReaderElement.height - 20,
+		flow: "paginated",
+		manager: "continuous",
+		snap: true,
+	});
 	hiddenRender.themes.fontSize(fontSize+'px')
 	generatePagination(hiddenBook, hiddenRender).then((data) => {
 		hiddenRender.destroy();
@@ -384,7 +391,8 @@ function getTotalPage(fontSize) {
 }
 
 function generatePagination(bookInp, renderer) {
-	book.rendition.display(lastReadLocation);
+	lastReadLocation == '' ? rendition.display() : rendition.display(lastReadLocation);
+
 	let totalPage = 0;
 	let chapterBase = [];
 	return bookInp.loaded.spine.then(async (data) => {
@@ -490,7 +498,8 @@ FONT_RESIZE_RANGE.addEventListener("change", (e) => {
 	rendition.themes.fontSize(e.target.value + "px");
 	showTopBar = true;
 	getTotalPage(e.target.value);
-	book.rendition.display(lastReadLocation);
+	lastReadLocation == '' ? rendition.display() : rendition.display(lastReadLocation);
+
 });
 
 /**

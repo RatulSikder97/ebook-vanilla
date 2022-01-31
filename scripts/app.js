@@ -149,7 +149,11 @@ function checkBookUrl() {
  * Initiate Book
  */
 function initBook() {
+<<<<<<< HEAD
 	book = ePub("/assets/book/Crime-and-Punishment-Fyodor-Dostoevsky.epub");
+=======
+	book = ePub(BOOK_ID);
+>>>>>>> 0484bc0abff7bcec652bdaf5ae0442e5bb915a61
 }
 
 /**
@@ -356,7 +360,11 @@ function getTotalPage(fontSize) {
 	container.appendChild(hiddenEpubElement);
 	document.body.appendChild(container);
 
+<<<<<<< HEAD
 	const hiddenBook = ePub("/assets/book/Crime-and-Punishment-Fyodor-Dostoevsky.epub");
+=======
+	const hiddenBook = ePub(BOOK_ID);
+>>>>>>> 0484bc0abff7bcec652bdaf5ae0442e5bb915a61
 
 	hiddenRender = hiddenBook.renderTo(hiddenEpubElement, BOOK_RENDER_OPTION);
 	hiddenRender.themes.fontSize(fontSize+'px')

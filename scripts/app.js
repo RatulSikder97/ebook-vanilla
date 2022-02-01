@@ -117,6 +117,17 @@ function highlightSelection(color) {
 	epubSelection.removeAllRanges();
 }
 
+function highlightOverChannel(cfi, color) {
+    rendition.annotations.highlight(
+        cfi,
+        {},
+        (e) => {
+          console.log(e);
+        },
+        'h-' + color
+      );
+}
+
 /**
  * User Verification
  * @returns status: boolean
@@ -155,6 +166,11 @@ function initBook() {
 /**
  * Main Render Function
  */
+
+function goToCfi(cfi) {
+    rendition.display(cfi)
+}
+
 async function renderBook() {
 	if (userVerification() && checkBookUrl()) {
 		initBook();

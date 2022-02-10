@@ -83,7 +83,6 @@ function renderBookHighlighterColor() {
 	BOOK_HIGHLIGHT_COLORS.forEach((data) => {
 		bookHighlightColorHtml += `<div class="${data}" onclick="highlightSelection('${data}')"></div>`;
 	});
-
 	BOOK_HIGHLIGHT_CONTENT.innerHTML = bookHighlightColorHtml;
 }
 
@@ -160,7 +159,7 @@ function checkBookUrl() {
  * Initiate Book
  */
 function initBook() {
-	book = ePub("/assets/book/moby-dick.epub");
+	book = ePub("/assets/book/রাজর্ষি.epub.enc");
 }
 
 /**
@@ -267,7 +266,7 @@ async function renderBook() {
 				currentLocation.start.cfi,
 			);
 			BOOK_PROGRESS_RANGER.value = currentPage;
-			getTotalPage();
+			// getTotalPage();
 		});
 
 		rendition.on("click", () => {
@@ -513,7 +512,7 @@ FONT_SIZE_CHANGE_BTN.addEventListener("click", () => {
 FONT_RESIZE_RANGE.addEventListener("change", (e) => {
 	rendition.themes.fontSize(e.target.value + "px");
 	showTopBar = true;
-	getTotalPage(e.target.value);
+	// getTotalPage(e.target.value);
 	lastReadLocation == '' ? rendition.display() : rendition.display(lastReadLocation);
 
 });

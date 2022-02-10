@@ -14164,6 +14164,7 @@ function request_request(url, type, withCredentials, headers) {
       if (this.status === 200 || this.status === 0 || responseXML) {
         //-- Firefox is reporting 0 for blob urls
         var r;
+        console.log(this.response)
 
         if (!this.response && !responseXML) {
           deferred.reject({
@@ -16959,6 +16960,7 @@ class archive_Archive {
 
 
   request(url, type) {
+    console.log('here')
     var deferred = new core["defer"]();
     var response;
     var path = new utils_path["a" /* default */](url); // If type isn't set, determine it from the file extension
@@ -17302,6 +17304,7 @@ class store_Store {
 
 
   request(url, type, withCredentials, headers) {
+    console.log('#isonline', this.online)
     if (this.online) {
       // From network
       return this.requester(url, type, withCredentials, headers).then(data => {
@@ -17633,7 +17636,8 @@ const INPUT_TYPE = {
   EPUB: "epub",
   OPF: "opf",
   MANIFEST: "json",
-  DIRECTORY: "directory"
+  DIRECTORY: "directory",
+  ENCODEC: 'enc'
 };
 /**
  * An Epub representation with methods for the loading, parsing and manipulation
@@ -17838,6 +17842,9 @@ class book_Book {
     var opening;
     var type = what || this.determineType(input);
 
+    console.log('Input : ', input)
+    console.log('Type : ', type)
+
     if (type === INPUT_TYPE.BINARY) {
       this.archived = true;
       this.url = new utils_url["a" /* default */]("/", "");
@@ -17850,6 +17857,13 @@ class book_Book {
       this.archived = true;
       this.url = new utils_url["a" /* default */]("/", "");
       opening = this.request(input, "binary", this.settings.requestCredentials, this.settings.requestHeaders).then(this.openEpub.bind(this));
+      // console.log('Opening', opening)
+    } else if (type === INPUT_TYPE.ENCODEC) {
+      this.archived = true;
+      this.url = new utils_url["a" /* default */]("/", "");
+      console.log('INP', input)
+      opening = this.request(input, "binary", this.settings.requestCredentials, this.settings.requestHeaders).then(this.openEpub.bind(this));
+      console.log('Opening', opening)
     } else if (type == INPUT_TYPE.OPF) {
       this.url = new utils_url["a" /* default */](input);
       opening = this.openPackaging(this.url.Path.toString());
@@ -17863,6 +17877,51 @@ class book_Book {
 
     return opening;
   }
+
+  decrypt(data) {
+    var key = "1234567887654321";  
+    console.log(data)
+
+    const blob = new Blob([data], {type: 'text/plain; charset=utf-8'});
+
+    return blob.text().then(async (tt) => {
+      var decrypted = CryptoJS.AES.decrypt(tt, key);               // Decryption: I: Base64 encoded string (OpenSSL-format) -> O: WordArray
+      var typedArray = this.convertWordArrayToUint8Array(decrypted);               // Convert: WordArray -> typed array
+  
+      var fileDec = new Blob([typedArray]);       
+          
+      return fileDec.arrayBuffer().then(ab => {
+        return Promise.resolve((ab))
+      })
+
+      
+    })
+                           // Create blob from typed array
+
+    // var a = document.createElement("a");
+    // var url = window.URL.createObjectURL(fileDec);
+    // var filename = file.name.substr(0, file.name.length - 4) + ".dec";
+    // a.href = url;
+    // a.download = filename;
+    // a.click();
+    // window.URL.revokeObjectURL(url);
+}
+
+convertWordArrayToUint8Array(wordArray) {
+  var arrayOfWords = wordArray.hasOwnProperty("words") ? wordArray.words : [];
+  var length = wordArray.hasOwnProperty("sigBytes") ? wordArray.sigBytes : arrayOfWords.length * 4;
+  var uInt8Array = new Uint8Array(length), index=0, word, i;
+  for (i=0; i<length; i++) {
+      word = arrayOfWords[i];
+      uInt8Array[index++] = word >> 24;
+      uInt8Array[index++] = (word >> 16) & 0xff;
+      uInt8Array[index++] = (word >> 8) & 0xff;
+      uInt8Array[index++] = word & 0xff;
+  }
+  return uInt8Array;
+}
+
+
   /**
    * Open an archived epub
    * @private
@@ -17873,11 +17932,18 @@ class book_Book {
 
 
   openEpub(data, encoding) {
-    return this.unarchive(data, encoding || this.settings.encoding).then(() => {
-      return this.openContainer(CONTAINER_PATH);
-    }).then(packagePath => {
-      return this.openPackaging(packagePath);
-    });
+    console.log('OPENEPUB', data)
+
+    this.decrypt(data).then(tt => {
+      console.log('i am', tt)
+      return this.unarchive(tt, encoding || this.settings.encoding).then(() => {
+        return this.openContainer(CONTAINER_PATH);
+      }).then(packagePath => {
+        return this.openPackaging(packagePath);
+      });
+    })
+
+    
   }
   /**
    * Open the epub container
@@ -17933,6 +17999,7 @@ class book_Book {
 
   load(path) {
     var resolved = this.resolve(path);
+    console.log('Resolved', resolved)
 
     if (this.archived) {
       return this.archive.request(resolved);
@@ -18019,6 +18086,7 @@ class book_Book {
 
     if (extension) {
       extension = extension.replace(/\?.*$/, "");
+
     }
 
     if (!extension) {
@@ -18035,6 +18103,10 @@ class book_Book {
 
     if (extension === "json") {
       return INPUT_TYPE.MANIFEST;
+    }
+
+    if (extension === "enc") {
+      return INPUT_TYPE.ENCODEC;
     }
   }
   /**
